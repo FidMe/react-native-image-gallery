@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 import { ImagePreviewProps } from './types';
-import ImageZoom from 'react-native-image-pan-zoom';
+import Zoom from 'react-native-zoom-reanimated';
 
 const { height, width } = Dimensions.get('window');
 
@@ -25,13 +25,13 @@ const ImagePreview = ({
         {renderCustomImage ? (
           renderCustomImage(item, index, isSelected)
         ) : (
-          // <ImageZoom >
-          <Image
-            resizeMode={resizeMode}
-            source={item.source}
-            style={styles.image}
-          />
-          // </ImageZoom>
+          <Zoom>
+            <Image
+              resizeMode={resizeMode}
+              source={item.source}
+              style={styles.image}
+            />
+          </Zoom>
         )}
       </View>
     </TouchableWithoutFeedback>
