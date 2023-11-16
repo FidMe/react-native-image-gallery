@@ -184,7 +184,6 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
           data={props.images}
           horizontal
           keyExtractor={keyExtractorThumb}
-          pagingEnabled
           ref={bottomRef}
           renderItem={renderThumb}
           showsHorizontalScrollIndicator={false}
