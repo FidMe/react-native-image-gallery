@@ -3,6 +3,7 @@ import {
   Dimensions,
   Image,
   StyleSheet,
+  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
@@ -39,13 +40,11 @@ const ImagePreview = ({
 };
 
 const styles = StyleSheet.create({
-  containerStyle: {
-    height: height * 0.8,
-    width,
-  },
+  containerStyle: {},
   image: {
     height: '100%',
-    width: '100%',
+    width: width - 10,
+    borderRadius: 20,
   },
 });
 
