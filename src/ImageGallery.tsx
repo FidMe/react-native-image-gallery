@@ -159,6 +159,11 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
 
   return (
     <View style={styles.container}>
+      {renderHeaderComponent ? (
+        <View style={styles.header}>
+          {renderHeaderComponent(images?.[activeIndex], activeIndex)}
+        </View>
+      ) : null}
       <View style={{ flex: 1 }}>
         <SwipeContainer
           disableSwipe={disableSwipe}
@@ -201,11 +206,6 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
           />
         </View>
       )}
-      {renderHeaderComponent ? (
-        <View style={styles.header}>
-          {renderHeaderComponent(images?.[activeIndex], activeIndex)}
-        </View>
-      ) : null}
       {renderFooterComponent ? (
         <View style={styles.footer}>
           {renderFooterComponent(images[activeIndex], activeIndex)}
@@ -220,8 +220,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    position: 'absolute',
-    top: 0,
     width: '100%',
   },
   footer: {
