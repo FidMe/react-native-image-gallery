@@ -19,6 +19,7 @@ const defaultProps = {
   thumbColor: '#d9b44a',
   thumbResizeMode: 'cover',
   thumbSize: 48,
+  thumbOffset: 10,
 };
 
 const ImageGallery = (props: IProps & typeof defaultProps) => {
@@ -36,6 +37,7 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
     thumbColor,
     thumbResizeMode,
     thumbSize,
+    thumbOffset,
     disableSwipe,
     onEndReached,
     onPressPreviewImage,
@@ -187,6 +189,7 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
           ref={bottomRef}
           renderItem={renderThumb}
           showsHorizontalScrollIndicator={false}
+          ItemSeparatorComponent={() => <View style={{ width: thumbOffset }} />}
           onEndReachedThreshold={0.2}
           onEndReached={onEndReached}
           style={[styles.bottomFlatlist, { bottom: thumbSize }]}
@@ -226,7 +229,6 @@ const styles = StyleSheet.create({
   },
   thumb: {
     borderRadius: 12,
-    marginRight: 10,
   },
   thumbnailListContainer: {
     paddingHorizontal: 10,

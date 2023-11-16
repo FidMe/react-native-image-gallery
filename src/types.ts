@@ -11,6 +11,7 @@ export interface IProps {
   thumbColor?: string;
   thumbSize?: number;
   thumbResizeMode?: ImageResizeMode;
+  thumbOffset?: number;
   disableSwipe?: boolean;
   onEndReached?: void;
   onPressPreviewImage?: (item: ImageObject) => void;
