@@ -12,6 +12,8 @@ export interface IProps {
   thumbSize?: number;
   thumbResizeMode?: ImageResizeMode;
   disableSwipe?: boolean;
+  onEndReached?: void;
+  onPressPreviewImage?: (item: ImageObject) => void;
 
   renderCustomThumb?: (
     item: ImageObject,
@@ -48,8 +50,15 @@ export interface FooterProps {
 
 export interface ImageObject {
   id?: string | number;
-  thumbUrl?: string;
-  url: string;
+  thumbnail?: {
+    source: ImageSource;
+  };
+  source: ImageSource;
+}
+
+export interface ImageSource {
+  uri: string;
+  headers: object;
 }
 
 export interface ImagePreviewProps {
@@ -57,6 +66,7 @@ export interface ImagePreviewProps {
   isSelected: boolean;
   item: ImageObject;
   resizeMode?: ImageResizeMode;
+  onPress?: (item: ImageObject) => void;
 
   renderCustomImage?: (
     item: ImageObject,

@@ -16,29 +16,28 @@ const ImagePreview = ({
   item,
   renderCustomImage,
   resizeMode,
+  onPress,
 }: ImagePreviewProps) => {
   return (
-    <View>
-      <TouchableWithoutFeedback onPress={() => {}}>
-        <View style={styles.containerStyle}>
-          {renderCustomImage ? (
-            renderCustomImage(item, index, isSelected)
-          ) : (
-            <Image
-              resizeMode={resizeMode}
-              source={{ uri: item.url }}
-              style={styles.image}
-            />
-          )}
-        </View>
-      </TouchableWithoutFeedback>
-    </View>
+    <TouchableWithoutFeedback onPress={() => onPress?.(item)}>
+      <View style={styles.containerStyle}>
+        {renderCustomImage ? (
+          renderCustomImage(item, index, isSelected)
+        ) : (
+          <Image
+            resizeMode={resizeMode}
+            source={item.source}
+            style={styles.image}
+          />
+        )}
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
 const styles = StyleSheet.create({
   containerStyle: {
-    height,
+    height: height * 0.8,
     width,
   },
   image: {
