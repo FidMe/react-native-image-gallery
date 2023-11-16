@@ -7,6 +7,7 @@ import {
   View,
 } from 'react-native';
 import { ImagePreviewProps } from './types';
+import { ImageZoom } from '@likashefqet/react-native-image-zoom';
 
 const { height, width } = Dimensions.get('window');
 
@@ -24,7 +25,7 @@ const ImagePreview = ({
         {renderCustomImage ? (
           renderCustomImage(item, index, isSelected)
         ) : (
-          <Image
+          <ImageZoom
             resizeMode={resizeMode}
             source={item.source}
             style={styles.image}
