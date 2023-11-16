@@ -52,25 +52,27 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
     item && item.id ? item.id.toString() : index.toString();
 
   const scrollToIndex = (i: number) => {
-    setActiveIndex(i);
+    if (i !== activeIndex) {
+      setActiveIndex(i);
 
-    if (topRef?.current) {
-      topRef.current.scrollToIndex({
-        animated: true,
-        index: i,
-      });
-    }
-    if (bottomRef?.current) {
-      if (i * (thumbSize + 10) - thumbSize / 2 > deviceWidth / 2) {
-        bottomRef?.current?.scrollToIndex({
+      if (topRef?.current) {
+        topRef.current.scrollToIndex({
           animated: true,
           index: i,
         });
-      } else {
-        bottomRef?.current?.scrollToIndex({
-          animated: true,
-          index: 0,
-        });
+      }
+      if (bottomRef?.current) {
+        if (i * (thumbSize + 10) - thumbSize / 2 > deviceWidth / 2) {
+          bottomRef?.current?.scrollToIndex({
+            animated: true,
+            index: i,
+          });
+        } else {
+          bottomRef?.current?.scrollToIndex({
+            animated: true,
+            index: 0,
+          });
+        }
       }
     }
   };
