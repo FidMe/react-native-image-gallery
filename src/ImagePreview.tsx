@@ -20,21 +20,21 @@ const ImagePreview = ({
   onPress,
 }: ImagePreviewProps) => {
   return (
-    <TouchableWithoutFeedback onPress={() => onPress?.(item)}>
-      <View style={styles.containerStyle}>
-        {renderCustomImage ? (
-          renderCustomImage(item, index, isSelected)
-        ) : (
-          <Zoom>
+    <Zoom>
+      <TouchableWithoutFeedback onPress={() => onPress?.(item)}>
+        <View style={styles.containerStyle}>
+          {renderCustomImage ? (
+            renderCustomImage(item, index, isSelected)
+          ) : (
             <Image
               resizeMode={resizeMode}
               source={item.source}
               style={styles.image}
             />
-          </Zoom>
-        )}
-      </View>
-    </TouchableWithoutFeedback>
+          )}
+        </View>
+      </TouchableWithoutFeedback>
+    </Zoom>
   );
 };
 
