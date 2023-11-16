@@ -1,5 +1,5 @@
 {
-  "name": "@georstat/react-native-image-gallery",
+  "name": "@fidme/react-native-image-gallery",
   "version": "1.1.0",
   "access": "public",
   "description": "React Native Image Gallery with Thumbnails",
@@ -22,13 +22,13 @@
     "photo",
     "photo-gallery"
   ],
-  "repository": "https://github.com/georstat/react-native-image-gallery",
+  "repository": "https://github.com/FidMe/react-native-photo-gallery",
   "author": "Efstathios Ntonas - George Bakogiannis - George Kallinikos",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/georstat/react-native-image-gallery/issues"
+    "url": "https://github.com/FidMe/react-native-photo-gallery/issues"
   },
-  "homepage": "https://github.com/georstat/react-native-image-gallery",
+  "homepage": "https://github.com/FidMe/react-native-photo-gallery",
   "scripts": {
     "typescript": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
