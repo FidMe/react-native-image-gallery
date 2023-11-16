@@ -25,13 +25,13 @@ const ImagePreview = ({
         {renderCustomImage ? (
           renderCustomImage(item, index, isSelected)
         ) : (
-          <ImageZoom>
-            <Image
-              resizeMode={resizeMode}
-              source={item.source}
-              style={styles.image}
-            />
-          </ImageZoom>
+          // <ImageZoom >
+          <Image
+            resizeMode={resizeMode}
+            source={item.source}
+            style={styles.image}
+          />
+          // </ImageZoom>
         )}
       </View>
     </TouchableWithoutFeedback>
