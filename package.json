@@ -87,6 +87,6 @@
     ]
   },
   "dependencies": {
-    "@openspacelabs/react-native-zoomable-view": "^2.1.5"
+    "react-native-image-pan-zoom": "^2.1.12"
   }
 }

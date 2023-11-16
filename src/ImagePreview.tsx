@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 import { ImagePreviewProps } from './types';
-import { ReactNativeZoomableView } from '@openspacelabs/react-native-zoomable-view';
+import ImageZoom from 'react-native-image-pan-zoom';
 
 const { height, width } = Dimensions.get('window');
 
@@ -25,23 +25,13 @@ const ImagePreview = ({
         {renderCustomImage ? (
           renderCustomImage(item, index, isSelected)
         ) : (
-          <ReactNativeZoomableView
-            maxZoom={1.5}
-            minZoom={0.5}
-            zoomStep={0.5}
-            initialZoom={1}
-            bindToBorders={true}
-            style={{
-              padding: 10,
-              backgroundColor: 'red',
-            }}
-          >
+          <ImageZoom>
             <Image
               resizeMode={resizeMode}
               source={item.source}
               style={styles.image}
             />
-          </ReactNativeZoomableView>
+          </ImageZoom>
         )}
       </View>
     </TouchableWithoutFeedback>
