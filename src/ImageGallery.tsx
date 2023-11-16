@@ -19,6 +19,7 @@ const defaultProps = {
   thumbColor: '#d9b44a',
   thumbResizeMode: 'cover',
   thumbSize: 48,
+  thumbOffset: 10,
 };
 
 const ImageGallery = (props: IProps & typeof defaultProps) => {
@@ -36,6 +37,7 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
     thumbColor,
     thumbResizeMode,
     thumbSize,
+    thumbOffset,
     disableSwipe,
     onEndReached,
     onPressPreviewImage,
@@ -52,25 +54,27 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
     item && item.id ? item.id.toString() : index.toString();
 
   const scrollToIndex = (i: number) => {
-    setActiveIndex(i);
+    if (i !== activeIndex) {
+      setActiveIndex(i);
 
-    if (topRef?.current) {
-      topRef.current.scrollToIndex({
-        animated: true,
-        index: i,
-      });
-    }
-    if (bottomRef?.current) {
-      if (i * (thumbSize + 10) - thumbSize / 2 > deviceWidth / 2) {
-        bottomRef?.current?.scrollToIndex({
+      if (topRef?.current) {
+        topRef.current.scrollToIndex({
           animated: true,
           index: i,
         });
-      } else {
-        bottomRef?.current?.scrollToIndex({
-          animated: true,
-          index: 0,
-        });
+      }
+      if (bottomRef?.current) {
+        if (i * (thumbSize + 10) - thumbSize / 2 > deviceWidth / 2) {
+          bottomRef?.current?.scrollToIndex({
+            animated: true,
+            index: i,
+          });
+        } else {
+          bottomRef?.current?.scrollToIndex({
+            animated: true,
+            index: 0,
+          });
+        }
       }
     }
   };
@@ -147,7 +151,7 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
       return {
         index,
         length: thumbSize,
-        offset: thumbSize * index,
+        offset: thumbSize * index + thumbOffset * index,
       };
     },
     [images]
@@ -182,10 +186,10 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
           data={props.images}
           horizontal
           keyExtractor={keyExtractorThumb}
-          pagingEnabled
           ref={bottomRef}
           renderItem={renderThumb}
           showsHorizontalScrollIndicator={false}
+          ItemSeparatorComponent={() => <View style={{ width: thumbOffset }} />}
           onEndReachedThreshold={0.2}
           onEndReached={onEndReached}
           style={[styles.bottomFlatlist, { bottom: thumbSize }]}
@@ -225,7 +229,6 @@ const styles = StyleSheet.create({
   },
   thumb: {
     borderRadius: 12,
-    marginRight: 10,
   },
   thumbnailListContainer: {
     paddingHorizontal: 10,
