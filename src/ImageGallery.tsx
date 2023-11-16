@@ -151,7 +151,7 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
       return {
         index,
         length: thumbSize,
-        offset: thumbSize * index,
+        offset: thumbSize * index + thumbOffset * index,
       };
     },
     [images]
