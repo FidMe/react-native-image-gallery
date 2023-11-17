@@ -20,6 +20,7 @@ const defaultProps = {
   thumbResizeMode: 'cover',
   thumbSize: 48,
   thumbOffset: 10,
+  autoScroll: false,
 };
 
 const ImageGallery = (props: IProps & typeof defaultProps) => {
@@ -41,10 +42,12 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
     disableSwipe,
     onEndReached,
     onPressPreviewImage,
+    autoScroll,
   } = props;
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [autoScrollActive, setAutoScrollActive] = useState(autoScroll);
   const topRef = useRef<FlatList>(null);
   const bottomRef = useRef<FlatList>(null);
 
@@ -128,6 +131,21 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
   };
 
   useEffect(() => {
+    let autoScrollTimer: NodeJS.Timeout;
+
+    if (autoScrollActive) {
+      autoScrollTimer = setInterval(() => {
+        const nextIndex = (activeIndex + 1) % images.length;
+        scrollToIndex(nextIndex);
+      }, 5000);
+    }
+
+    return () => {
+      clearInterval(autoScrollTimer);
+    };
+  }, [activeIndex, autoScrollActive]);
+
+  useEffect(() => {
     if (isOpen && initialIndex) {
       setActiveIndex(initialIndex);
     } else if (!isOpen) {
@@ -157,6 +175,10 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
     [images]
   );
 
+  const handleManualScroll = () => {
+    setAutoScrollActive(false);
+  };
+
   return (
     <View style={styles.container}>
       {renderHeaderComponent ? (
@@ -182,6 +204,7 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
             renderItem={renderItem}
             scrollEnabled={!isDragging}
             showsHorizontalScrollIndicator={false}
+            onScrollBeginDrag={handleManualScroll}
           />
         </SwipeContainer>
       </View>
@@ -202,7 +225,8 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
             )}
             onEndReachedThreshold={0.2}
             onEndReached={onEndReached}
-            style={{ paddingVertical: 20 }}
+            style={styles.bottomFlatlist}
+            onScrollBeginDrag={handleManualScroll}
           />
         </View>
       )}
@@ -236,8 +260,9 @@ const styles = StyleSheet.create({
   thumbnailListContainer: {
     paddingHorizontal: 10,
   },
-  bottomFlatlist: {},
-  bottomFlatListContainer: {},
+  bottomFlatlist: {
+    paddingVertical: 20,
+  },
 });
 
 ImageGallery.defaultProps = defaultProps;
