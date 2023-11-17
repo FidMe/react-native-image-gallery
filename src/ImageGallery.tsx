@@ -159,47 +159,53 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
 
   return (
     <View style={styles.container}>
-      <SwipeContainer
-        disableSwipe={disableSwipe}
-        setIsDragging={setIsDragging}
-        close={close}
-      >
-        <FlatList
-          initialScrollIndex={initialIndex}
-          getItemLayout={getImageLayout}
-          data={images}
-          horizontal
-          keyExtractor={keyExtractorImage}
-          onMomentumScrollEnd={onMomentumEnd}
-          pagingEnabled
-          ref={topRef}
-          renderItem={renderItem}
-          scrollEnabled={!isDragging}
-          showsHorizontalScrollIndicator={false}
-        />
-      </SwipeContainer>
-      {hideThumbs ? null : (
-        <FlatList
-          initialScrollIndex={initialIndex}
-          getItemLayout={getThumbLayout}
-          contentContainerStyle={styles.thumbnailListContainer}
-          data={props.images}
-          horizontal
-          keyExtractor={keyExtractorThumb}
-          ref={bottomRef}
-          renderItem={renderThumb}
-          showsHorizontalScrollIndicator={false}
-          ItemSeparatorComponent={() => <View style={{ width: thumbOffset }} />}
-          onEndReachedThreshold={0.2}
-          onEndReached={onEndReached}
-          style={[styles.bottomFlatlist, { bottom: thumbSize }]}
-        />
-      )}
       {renderHeaderComponent ? (
         <View style={styles.header}>
           {renderHeaderComponent(images?.[activeIndex], activeIndex)}
         </View>
       ) : null}
+      <View style={{ flex: 1 }}>
+        <SwipeContainer
+          disableSwipe={disableSwipe}
+          setIsDragging={setIsDragging}
+          close={close}
+        >
+          <FlatList
+            initialScrollIndex={initialIndex}
+            getItemLayout={getImageLayout}
+            data={images}
+            horizontal
+            keyExtractor={keyExtractorImage}
+            onMomentumScrollEnd={onMomentumEnd}
+            pagingEnabled
+            ref={topRef}
+            renderItem={renderItem}
+            scrollEnabled={!isDragging}
+            showsHorizontalScrollIndicator={false}
+          />
+        </SwipeContainer>
+      </View>
+      {hideThumbs ? null : (
+        <View>
+          <FlatList
+            initialScrollIndex={initialIndex}
+            getItemLayout={getThumbLayout}
+            contentContainerStyle={styles.thumbnailListContainer}
+            data={props.images}
+            horizontal
+            keyExtractor={keyExtractorThumb}
+            ref={bottomRef}
+            renderItem={renderThumb}
+            showsHorizontalScrollIndicator={false}
+            ItemSeparatorComponent={() => (
+              <View style={{ width: thumbOffset }} />
+            )}
+            onEndReachedThreshold={0.2}
+            onEndReached={onEndReached}
+            style={{ paddingVertical: 20 }}
+          />
+        </View>
+      )}
       {renderFooterComponent ? (
         <View style={styles.footer}>
           {renderFooterComponent(images[activeIndex], activeIndex)}
@@ -212,11 +218,8 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'flex-start',
   },
   header: {
-    position: 'absolute',
-    top: 0,
     width: '100%',
   },
   footer: {
@@ -233,9 +236,8 @@ const styles = StyleSheet.create({
   thumbnailListContainer: {
     paddingHorizontal: 10,
   },
-  bottomFlatlist: {
-    position: 'absolute',
-  },
+  bottomFlatlist: {},
+  bottomFlatListContainer: {},
 });
 
 ImageGallery.defaultProps = defaultProps;
