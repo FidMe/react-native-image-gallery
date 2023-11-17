@@ -136,7 +136,6 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
     if (autoScrollActive) {
       autoScrollTimer = setInterval(() => {
         const nextIndex = (activeIndex + 1) % images.length;
-        console.log('scroll to ', nextIndex, ' from ', activeIndex);
         scrollToIndex(nextIndex);
       }, 5000);
     }
