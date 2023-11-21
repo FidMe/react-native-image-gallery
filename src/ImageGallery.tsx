@@ -29,7 +29,6 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
     hideThumbs,
     images,
     initialIndex,
-    isOpen,
     renderCustomImage,
     renderCustomThumb,
     renderFooterComponent,
@@ -155,7 +154,7 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
       onPageChange?.(0);
       setActiveIndex(0);
     }
-  }, [isOpen, initialIndex]);
+  }, []);
 
   const getImageLayout = useCallback(
     (_, index) => {

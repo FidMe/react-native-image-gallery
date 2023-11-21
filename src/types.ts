@@ -6,7 +6,6 @@ export interface IProps {
   hideThumbs?: boolean;
   images: ImageObject[];
   initialIndex?: number;
-  isOpen: boolean;
   resizeMode?: ImageResizeMode;
   thumbColor?: string;
   thumbSize?: number;
