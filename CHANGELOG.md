@@ -1,6 +1,12 @@
 # Changelog
 
-## [v1.4.0](https://github.com/FidMe/react-native-image-gallery/compare/v1.3.0...v1.4.0)
+## [v1.5.0](https://github.com/FidMe/react-native-image-gallery/compare/v1.4.0...v1.5.0)
+
+#### Features
+
+- feat: add handle page change action ([`#5`](https://github.com/FidMe/react-native-image-gallery/pull/5)).
+
+## [v1.4.0](https://github.com/FidMe/react-native-image-gallery/compare/v1.3.0...v1.4.0) - 2023-11-17
 
 #### Features
 
