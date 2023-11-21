@@ -20,7 +20,7 @@ const defaultProps = {
   thumbResizeMode: 'cover',
   thumbSize: 48,
   thumbOffset: 10,
-  autoScroll: false,
+  autoScroll: 0,
 };
 
 const ImageGallery = (props: IProps & typeof defaultProps) => {
@@ -47,7 +47,7 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
-  const [autoScrollActive, setAutoScrollActive] = useState(autoScroll);
+  const [autoScrollActive, setAutoScrollActive] = useState(autoScroll > 0);
   const topRef = useRef<FlatList>(null);
   const bottomRef = useRef<FlatList>(null);
 
@@ -138,7 +138,7 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
       autoScrollTimer = setInterval(() => {
         const nextIndex = (activeIndex + 1) % images.length;
         scrollToIndex(nextIndex);
-      }, 5000);
+      }, autoScroll);
     }
 
     return () => {
