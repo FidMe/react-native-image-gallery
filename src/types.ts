@@ -15,7 +15,7 @@ export interface IProps {
   disableSwipe?: boolean;
   onEndReached?: void;
   onPressPreviewImage?: (item: ImageObject) => void;
-  onChangePage?: (index: number) => void;
+  onPageChange?: (index: number) => void;
 
   renderCustomThumb?: (
     item: ImageObject,
