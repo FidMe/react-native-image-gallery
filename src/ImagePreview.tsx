@@ -3,14 +3,13 @@ import {
   Dimensions,
   Image,
   StyleSheet,
-  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import { ImagePreviewProps } from './types';
 import Zoom from 'react-native-zoom-reanimated';
 
-const { height, width } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 const ImagePreview = ({
   index,

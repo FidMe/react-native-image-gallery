@@ -6,7 +6,6 @@ export interface IProps {
   hideThumbs?: boolean;
   images: ImageObject[];
   initialIndex?: number;
-  isOpen: boolean;
   resizeMode?: ImageResizeMode;
   thumbColor?: string;
   thumbSize?: number;
@@ -15,6 +14,7 @@ export interface IProps {
   disableSwipe?: boolean;
   onEndReached?: void;
   onPressPreviewImage?: (item: ImageObject) => void;
+  onPageChange?: (index: number) => void;
 
   renderCustomThumb?: (
     item: ImageObject,
