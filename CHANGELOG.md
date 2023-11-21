@@ -1,6 +1,12 @@
 # Changelog
 
-## [v1.5.0](https://github.com/FidMe/react-native-image-gallery/compare/v1.4.0...v1.5.0)
+## [v1.6.0](https://github.com/FidMe/react-native-image-gallery/compare/v1.5.0...v1.6.0)
+
+#### Features
+
+- feat: use autoscroll timer instead of boolean ([`#6`](https://github.com/FidMe/react-native-image-gallery/pull/6)).
+
+## [v1.5.0](https://github.com/FidMe/react-native-image-gallery/compare/v1.4.0...v1.5.0) - 2023-11-21
 
 #### Features
 
