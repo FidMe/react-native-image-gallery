@@ -42,6 +42,7 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
     disableSwipe,
     onEndReached,
     onPressPreviewImage,
+    onPageChange,
     autoScroll,
   } = props;
 
@@ -58,6 +59,7 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
 
   const scrollToIndex = (i: number) => {
     if (i !== activeIndex) {
+      onPageChange?.(i);
       setActiveIndex(i);
 
       if (topRef?.current) {
@@ -146,9 +148,11 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
   }, [activeIndex, autoScrollActive]);
 
   useEffect(() => {
-    if (isOpen && initialIndex) {
+    if (initialIndex) {
+      onPageChange?.(initialIndex);
       setActiveIndex(initialIndex);
-    } else if (!isOpen) {
+    } else {
+      onPageChange?.(0);
       setActiveIndex(0);
     }
   }, [isOpen, initialIndex]);
