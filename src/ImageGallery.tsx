@@ -101,7 +101,7 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
 
   const handleImagePreviewZoomBegin = () => {
     setAutoScrollActive(false);
-  }
+  };
 
   const renderThumb = ({ item, index }: RenderImageProps) => {
     return (
