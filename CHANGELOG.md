@@ -1,6 +1,12 @@
 # Changelog
 
-## [v1.5.3](https://github.com/FidMe/react-native-image-gallery/compare/v1.5.2...v1.5.3)
+## [v1.6.0](https://github.com/FidMe/react-native-image-gallery/compare/v1.5.3...v1.6.0)
+
+#### Features
+
+- feat: 🎸 add onZoom prop to ImagePreview ([`#9`](https://github.com/FidMe/react-native-image-gallery/pull/9)).
+
+## [v1.5.3](https://github.com/FidMe/react-native-image-gallery/compare/v1.5.2...v1.5.3) - 2024-01-24
 
 #### Fixes
 
