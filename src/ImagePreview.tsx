@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 import { ImagePreviewProps } from './types';
-import Zoom from 'react-native-zoom-reanimated';
+import Zoom from "./Zoom";
 
 const { width } = Dimensions.get('window');
 
