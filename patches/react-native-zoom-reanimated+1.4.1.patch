@@ -1,0 +1,47 @@
+diff --git a/node_modules/react-native-zoom-reanimated/index.tsx b/node_modules/react-native-zoom-reanimated/index.tsx
+index 9846e01..6005bc4 100644
+--- a/node_modules/react-native-zoom-reanimated/index.tsx
++++ b/node_modules/react-native-zoom-reanimated/index.tsx
+@@ -26,6 +26,7 @@ import {
+ interface UseZoomGestureProps {
+   animationFunction?: (toValue: number, config?: object) => any;
+   animationConfig?: object;
++  onZoomStart?: () => void
+ }
+ 
+ export function useZoomGesture(props: UseZoomGestureProps = {}): {
+@@ -40,6 +41,7 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
+   const {
+     animationFunction = withTiming,
+     animationConfig,
++    onZoomStart
+   } = props
+ 
+   const baseScale = useSharedValue(1)
+@@ -299,7 +301,8 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
+ 
+     const pinchGesture = Gesture.Pinch()
+       .onStart(() => {
+-        updateZoomGestureLastTime()
++        updateZoomGestureLastTime();
++        onZoomStart?.()
+       })
+       .onUpdate(({ scale }: GestureUpdateEvent<PinchGestureHandlerEventPayload>): void => {
+         updateZoomGestureLastTime()
+@@ -354,7 +357,7 @@ export default function Zoom(props: PropsWithChildren<ZoomProps>): React.ReactNo
+   const {
+     style,
+     contentContainerStyle,
+-    children,
++    children,,
+     ...rest
+   } = props
+ 
+@@ -389,6 +392,7 @@ export interface ZoomProps {
+   style?: StyleProp<ViewProps>;
+   contentContainerStyle?: StyleProp<ViewProps>;
+   animationConfig?: object;
++  onZoomStart?: () => void;
+ 
+   animationFunction?<T extends AnimatableValue>(
+     toValue: T,
