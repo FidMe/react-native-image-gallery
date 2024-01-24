@@ -1,6 +1,12 @@
 # Changelog
 
-## [v1.6.0](https://github.com/FidMe/react-native-image-gallery/compare/v1.5.0...v1.6.0)
+## [v1.5.2](https://github.com/FidMe/react-native-image-gallery/compare/v1.5.1...v1.5.2)
+
+#### Fixes
+
+- fix: 🐛 set autoscroll to false when user going to background ([`#7`](https://github.com/FidMe/react-native-image-gallery/pull/7)).
+
+## [v1.5.1](https://github.com/FidMe/react-native-image-gallery/compare/v1.5.0...v1.5.1) - 2023-11-21
 
 #### Features
 
