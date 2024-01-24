@@ -21,6 +21,7 @@ const defaultProps = {
   thumbSize: 48,
   thumbOffset: 10,
   autoScroll: 0,
+  disableAutoScroll: false
 };
 
 const ImageGallery = (props: IProps & typeof defaultProps) => {
@@ -43,6 +44,7 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
     onPressPreviewImage,
     onPageChange,
     autoScroll,
+    disableAutoScroll
   } = props;
 
   const [activeIndex, setActiveIndex] = useState(0);
@@ -132,19 +134,22 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
   };
 
   useEffect(() => {
-    let autoScrollTimer: NodeJS.Timeout;
+    let autoScrollTimer: number;
 
-    if (autoScrollActive) {
+    if (autoScrollActive && !disableAutoScroll) {
       autoScrollTimer = setInterval(() => {
         const nextIndex = (activeIndex + 1) % images.length;
         scrollToIndex(nextIndex);
+        if(nextIndex === 0) {
+          setAutoScrollActive(false)
+        }
       }, autoScroll);
     }
 
     return () => {
       clearInterval(autoScrollTimer);
     };
-  }, [activeIndex, autoScrollActive]);
+  }, [activeIndex, autoScrollActive, disableAutoScroll]);
 
   useEffect(() => {
     if (initialIndex) {
