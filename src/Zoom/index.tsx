@@ -95,7 +95,7 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
     // TODO: MAKE SMARTER CHOICE BASED ON AVAILABLE FREE VERTICAL SPACE
     let newScale =
       width > height ? (width / height) * 0.8 : (height / width) * 0.8;
-    if (newScale < 1.4) newScale = 1.4;
+    if (newScale < 2) newScale = 2;
     else if (newScale > 1.5) newScale = 1.5;
 
     lastScale.value = newScale;
@@ -270,7 +270,7 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
       .numberOfTaps(2)
       .onStart(() => {
         updateZoomGestureLastTime();
-        if(onZoomBegin) {
+        if (onZoomBegin) {
           runOnJS(onZoomBegin)();
         }
       })
@@ -338,7 +338,7 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
     const pinchGesture = Gesture.Pinch()
       .onStart(() => {
         updateZoomGestureLastTime();
-        if(onZoomBegin) {
+        if (onZoomBegin) {
           runOnJS(onZoomBegin)();
         }
       })
