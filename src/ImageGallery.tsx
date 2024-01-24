@@ -144,8 +144,6 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
           setAutoScrollActive(false)
         }
       }, autoScroll);
-    } else if(disableAutoScroll) {
-      setAutoScrollActive(false)
     }
 
     return () => {
