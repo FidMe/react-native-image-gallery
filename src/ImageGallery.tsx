@@ -21,7 +21,7 @@ const defaultProps = {
   thumbSize: 48,
   thumbOffset: 10,
   autoScroll: 0,
-  disableAutoScroll: false
+  disableAutoScroll: false,
 };
 
 const ImageGallery = (props: IProps & typeof defaultProps) => {
@@ -44,7 +44,7 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
     onPressPreviewImage,
     onPageChange,
     autoScroll,
-    disableAutoScroll
+    disableAutoScroll,
   } = props;
 
   const [activeIndex, setActiveIndex] = useState(0);
@@ -94,9 +94,14 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
         resizeMode={resizeMode}
         renderCustomImage={renderCustomImage}
         onPress={onPressPreviewImage}
+        onZoomBegin={handleImagePreviewZoomBegin}
       />
     );
   };
+
+  const handleImagePreviewZoomBegin = () => {
+    setAutoScrollActive(false);
+  }
 
   const renderThumb = ({ item, index }: RenderImageProps) => {
     return (
@@ -140,8 +145,8 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
       autoScrollTimer = setInterval(() => {
         const nextIndex = (activeIndex + 1) % images.length;
         scrollToIndex(nextIndex, true);
-        if(nextIndex === 0) {
-          setAutoScrollActive(false)
+        if (nextIndex === 0) {
+          setAutoScrollActive(false);
         }
       }, autoScroll);
     }
