@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 import { ImagePreviewProps } from './types';
-import Zoom from 'react-native-zoom-reanimated';
+import Zoom from './Zoom';
 
 const { width } = Dimensions.get('window');
 
@@ -18,9 +18,10 @@ const ImagePreview = ({
   renderCustomImage,
   resizeMode,
   onPress,
+  onZoomBegin,
 }: ImagePreviewProps) => {
   return (
-    <Zoom>
+    <Zoom onZoomBegin={onZoomBegin}>
       <TouchableWithoutFeedback onPress={() => onPress?.(item)}>
         <View style={styles.containerStyle}>
           {renderCustomImage ? (
