@@ -69,6 +69,7 @@ export interface ImagePreviewProps {
   item: ImageObject;
   resizeMode?: ImageResizeMode;
   onPress?: (item: ImageObject) => void;
+  onZoom: () => void;
 
   renderCustomImage?: (
     item: ImageObject,

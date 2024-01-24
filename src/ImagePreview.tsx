@@ -18,9 +18,10 @@ const ImagePreview = ({
   renderCustomImage,
   resizeMode,
   onPress,
+  onZoom,
 }: ImagePreviewProps) => {
   return (
-    <Zoom>
+    <Zoom onZoomStart={onZoom}>
       <TouchableWithoutFeedback onPress={() => onPress?.(item)}>
         <View style={styles.containerStyle}>
           {renderCustomImage ? (
