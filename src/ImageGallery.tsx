@@ -58,12 +58,12 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
   const keyExtractorImage = (item: ImageObject, index: number) =>
     item && item.id ? item.id.toString() : index.toString();
 
-  const scrollToIndex = (i: number) => {
+  const scrollToIndex = (i: number, scrollTopView: boolean = false) => {
     if (i !== activeIndex) {
       onPageChange?.(i);
       setActiveIndex(i);
 
-      if (topRef?.current) {
+      if (topRef?.current && scrollTopView) {
         topRef.current.scrollToIndex({
           animated: true,
           index: i,
@@ -101,7 +101,7 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
   const renderThumb = ({ item, index }: RenderImageProps) => {
     return (
       <TouchableOpacity
-        onPress={() => scrollToIndex(index)}
+        onPress={() => scrollToIndex(index, true)}
         activeOpacity={0.8}
       >
         {renderCustomThumb ? (
@@ -139,7 +139,7 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
     if (autoScrollActive && !disableAutoScroll) {
       autoScrollTimer = setInterval(() => {
         const nextIndex = (activeIndex + 1) % images.length;
-        scrollToIndex(nextIndex);
+        scrollToIndex(nextIndex, true);
         if(nextIndex === 0) {
           setAutoScrollActive(false)
         }
