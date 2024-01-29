@@ -59,7 +59,7 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
     item && item.id ? item.id.toString() : index.toString();
 
   const scrollToIndex = (i: number, scrollTopView: boolean = false) => {
-    if (i !== activeIndex) {
+    if (i !== activeIndex && images?.length >= 1) {
       onPageChange?.(i);
       setActiveIndex(i);
 
