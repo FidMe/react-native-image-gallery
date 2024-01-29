@@ -59,7 +59,7 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
     item && item.id ? item.id.toString() : index.toString();
 
   const scrollToIndex = (i: number, scrollTopView: boolean = false) => {
-    if (i !== activeIndex && images?.length >= 1) {
+    if (Number.isFinite(i) && i !== activeIndex) {
       onPageChange?.(i);
       setActiveIndex(i);
 
@@ -82,6 +82,8 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
           });
         }
       }
+    } else {
+      setAutoScrollActive(false);
     }
   };
 
