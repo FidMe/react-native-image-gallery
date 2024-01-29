@@ -1,6 +1,15 @@
 # Changelog
 
-## [v1.6.1](https://github.com/FidMe/react-native-image-gallery/compare/v1.6.0...v1.6.1)
+## [v1.6.3](https://github.com/FidMe/react-native-image-gallery/compare/v1.6.2...v1.6.3)
+
+#### Fixes
+
+- fix: 🐛 disable scroll when user use NaN as scrolling index ([`#12`](https://github.com/FidMe/react-native-image-gallery/pull/12)).
+- fix: 🐛 disable scrollToIndex if empty images array ([`#11`](https://github.com/FidMe/react-native-image-gallery/pull/11)).
+
+## [v1.6.2](https://github.com/FidMe/react-native-image-gallery/compare/v1.6.1...v1.6.2) - 2024-01-29
+
+## [v1.6.1](https://github.com/FidMe/react-native-image-gallery/compare/v1.6.0...v1.6.1) - 2024-01-24
 
 #### Fixes
 
