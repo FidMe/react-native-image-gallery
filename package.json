@@ -1,6 +1,6 @@
 {
   "name": "@fidme/react-native-image-gallery",
-  "version": "1.6.5",
+  "version": "1.6.6",
   "access": "public",
   "description": "React Native Image Gallery with Thumbnails",
   "main": "lib/commonjs/index.js",

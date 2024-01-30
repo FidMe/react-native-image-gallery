@@ -1,6 +1,12 @@
 # Changelog
 
-## [v1.6.5](https://github.com/FidMe/react-native-image-gallery/compare/v1.6.4...v1.6.5)
+## [v1.6.6](https://github.com/FidMe/react-native-image-gallery/compare/v1.6.5...v1.6.6)
+
+#### Fixes
+
+- fix: 🐛 auto scroll break ([`#14`](https://github.com/FidMe/react-native-image-gallery/pull/14)).
+
+## [v1.6.5](https://github.com/FidMe/react-native-image-gallery/compare/v1.6.4...v1.6.5) - 2024-01-30
 
 ## [v1.6.4](https://github.com/FidMe/react-native-image-gallery/compare/v1.6.3...v1.6.4) - 2024-01-30
 
