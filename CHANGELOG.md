@@ -1,6 +1,12 @@
 # Changelog
 
-## [v1.6.3](https://github.com/FidMe/react-native-image-gallery/compare/v1.6.2...v1.6.3)
+## [v1.6.4](https://github.com/FidMe/react-native-image-gallery/compare/v1.6.3...v1.6.4)
+
+#### Fixes
+
+- fix: 🐛 adjust default double tap zoom ([`#13`](https://github.com/FidMe/react-native-image-gallery/pull/13)).
+
+## [v1.6.3](https://github.com/FidMe/react-native-image-gallery/compare/v1.6.2...v1.6.3) - 2024-01-29
 
 #### Fixes
 
