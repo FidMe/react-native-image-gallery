@@ -95,7 +95,7 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
     // TODO: MAKE SMARTER CHOICE BASED ON AVAILABLE FREE VERTICAL SPACE
     let newScale =
       width > height ? (width / height) * 0.8 : (height / width) * 0.8;
-    if (newScale < 2) newScale = 2;
+    if (newScale < 2.5) newScale = 2.5;
     else if (newScale > 1.5) newScale = 1.5;
 
     lastScale.value = newScale;
