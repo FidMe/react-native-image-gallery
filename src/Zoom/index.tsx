@@ -128,6 +128,10 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
 
     isZoomedIn.value = true;
     setZoomIcon(zoomOutIcon);
+
+    if (onZoomBegin) {
+      runOnJS(onZoomBegin)();
+    }
   }, [
     baseScale,
     pinchScale,
@@ -286,9 +290,6 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
       .numberOfTaps(2)
       .onStart(() => {
         updateZoomGestureLastTime();
-        if (onZoomBegin) {
-          runOnJS(onZoomBegin)();
-        }
       })
       .onEnd(() => {
         updateZoomGestureLastTime();
