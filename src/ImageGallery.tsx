@@ -10,6 +10,7 @@ import {
 import { ImageObject, IProps, RenderImageProps } from './types';
 import ImagePreview from './ImagePreview';
 import SwipeContainer from './SwipeContainer';
+import Zoom from './Zoom';
 
 const { width: deviceWidth } = Dimensions.get('window');
 
@@ -100,7 +101,6 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
         resizeMode={resizeMode}
         renderCustomImage={renderCustomImage}
         onPress={onPressPreviewImage}
-        onZoomBegin={handleImagePreviewZoomBegin}
       />
     );
   };
@@ -211,20 +211,22 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
           setIsDragging={setIsDragging}
           close={close}
         >
-          <FlatList
-            initialScrollIndex={initialIndex}
-            getItemLayout={getImageLayout}
-            data={images}
-            horizontal
-            keyExtractor={keyExtractorImage}
-            onMomentumScrollEnd={onMomentumEnd}
-            pagingEnabled
-            ref={topRef}
-            renderItem={renderItem}
-            scrollEnabled={!isDragging}
-            showsHorizontalScrollIndicator={false}
-            onScrollBeginDrag={handleManualScroll}
-          />
+          <Zoom onZoomBegin={handleImagePreviewZoomBegin}>
+            <FlatList
+              initialScrollIndex={initialIndex}
+              getItemLayout={getImageLayout}
+              data={images}
+              horizontal
+              keyExtractor={keyExtractorImage}
+              onMomentumScrollEnd={onMomentumEnd}
+              pagingEnabled
+              ref={topRef}
+              renderItem={renderItem}
+              scrollEnabled={!isDragging}
+              showsHorizontalScrollIndicator={false}
+              onScrollBeginDrag={handleManualScroll}
+            />
+          </Zoom>
         </SwipeContainer>
       </View>
       {hideThumbs ? null : (

@@ -1,8 +1,16 @@
-import React, { PropsWithChildren, useCallback, useMemo, useRef } from 'react';
+import React, {
+  PropsWithChildren,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
+  Image,
   LayoutChangeEvent,
   StyleProp,
   StyleSheet,
+  TouchableOpacity,
   View,
   ViewProps,
 } from 'react-native';
@@ -27,6 +35,9 @@ import {
 } from 'react-native-gesture-handler';
 import { GestureStateManagerType } from 'react-native-gesture-handler/lib/typescript/handlers/gestures/gestureStateManager';
 
+const zoomInIcon = require('../assets/zoomIn.png');
+const zoomOutIcon = require('../assets/zoomOut.png');
+
 interface UseZoomGestureProps {
   animationFunction?: (toValue: number, config?: object) => any;
   animationConfig?: object;
@@ -39,7 +50,9 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
   onLayout: (event: LayoutChangeEvent) => void;
   onLayoutContent: (event: LayoutChangeEvent) => void;
   zoomOut: () => void;
+  zoomIn: () => void;
   isZoomedIn: SharedValue<boolean>;
+  zoomIcon: Image;
   zoomGestureLastTime: SharedValue<Number>;
 } {
   const {
@@ -52,6 +65,7 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
   const pinchScale = useSharedValue(1);
   const lastScale = useSharedValue(1);
   const isZoomedIn = useSharedValue(false);
+  const [zoomIcon, setZoomIcon] = useState(zoomInIcon);
   const zoomGestureLastTime = useSharedValue(0);
 
   const containerDimensions = useSharedValue({ width: 0, height: 0 });
@@ -113,6 +127,7 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
     translateY.value = newOffsetY;
 
     isZoomedIn.value = true;
+    setZoomIcon(zoomOutIcon);
   }, [
     baseScale,
     pinchScale,
@@ -143,6 +158,7 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
     translateY.value = withAnimation(newOffsetY);
 
     isZoomedIn.value = false;
+    setZoomIcon(zoomInIcon);
   }, [
     baseScale,
     pinchScale,
@@ -394,24 +410,38 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
     onLayout,
     onLayoutContent,
     zoomOut,
+    zoomIn,
     isZoomedIn,
+    zoomIcon,
     zoomGestureLastTime,
   };
 }
 
 export default function Zoom(
   props: PropsWithChildren<ZoomProps>
-): React.ReactNode {
+): React.ReactElement {
   const { style, contentContainerStyle, children, ...rest } = props;
 
   const {
     zoomGesture,
+    zoomIn,
+    zoomOut,
+    isZoomedIn,
     onLayout,
+    zoomIcon,
     onLayoutContent,
     contentContainerAnimatedStyle,
   } = useZoomGesture({
     ...rest,
   });
+
+  const handlePressZoom = () => {
+    if (isZoomedIn.value) {
+      zoomOut();
+    } else {
+      zoomIn();
+    }
+  };
 
   return (
     <GestureDetector gesture={zoomGesture}>
@@ -426,6 +456,12 @@ export default function Zoom(
         >
           {children}
         </Animated.View>
+        <TouchableOpacity onPress={handlePressZoom} style={}>
+          <Animated.Image
+            source={zoomIcon}
+            style={{ width: 30, height: 30, tintColor: 'white' }}
+          />
+        </TouchableOpacity>
       </View>
     </GestureDetector>
   );
@@ -450,5 +486,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
+  },
+  zoomButton: {
+    backgroundColor: '#ff5722',
+    overflow: 'hidden',
+    borderRadius: 50,
+    position: 'absolute',
+    padding: 8,
+    right: 45,
+    bottom: 45,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
