@@ -455,7 +455,7 @@ export default function Zoom(
           style={[contentContainerAnimatedStyle, contentContainerStyle]}
           onLayout={onLayoutContent}
         >
-          {React.cloneElement(children, {srollEnabled: isZoomedIn.value})}
+          {React.cloneElement(children, {scrollEnabled: !isZoomedIn.value})}
         </Animated.View>
         <TouchableOpacity onPress={handlePressZoom} style={styles.zoomButton}>
           <Animated.Image
