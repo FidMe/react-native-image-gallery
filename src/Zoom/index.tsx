@@ -456,7 +456,7 @@ export default function Zoom(
         >
           {children}
         </Animated.View>
-        <TouchableOpacity onPress={handlePressZoom} style={}>
+        <TouchableOpacity onPress={handlePressZoom} style={styles.zoomButton}>
           <Animated.Image
             source={zoomIcon}
             style={{ width: 30, height: 30, tintColor: 'white' }}
