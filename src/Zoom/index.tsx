@@ -118,8 +118,6 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
 
     lastScale.value = newScale;
 
-    console.log('newScale', newScale);
-
     baseScale.value = withAnimation(newScale);
     pinchScale.value = withAnimation(1);
 
