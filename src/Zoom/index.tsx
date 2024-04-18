@@ -120,10 +120,6 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
 
     baseScale.value = withAnimation(newScale);
     pinchScale.value = withAnimation(1);
-
-    if (lastScale.value > 2.5) {
-      // setZoomIcon(zoomOutIcon);
-    }
   }, [
     baseScale,
     pinchScale,
@@ -133,6 +129,8 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
     translateY,
     lastScale,
     getContentContainerSize,
+    isZoomedIn,
+    currentIconId,
     withAnimation,
   ]);
 
@@ -162,6 +160,7 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
     translateY,
     lastScale,
     isZoomedIn,
+    currentIconId,
     withAnimation,
   ]);
 
@@ -391,13 +390,13 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
     ],
   }));
 
-  const handleZoom = () => {
+  const handleZoom = useCallback(() => {
     if (lastScale.value >= 2.5) {
       zoomOut();
     } else {
       zoomIn();
     }
-  };
+  }, [zoomIn, zoomOut]);
 
   return {
     zoomGesture,
