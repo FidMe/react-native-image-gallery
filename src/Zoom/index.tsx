@@ -1,12 +1,5 @@
-import React, {
-  PropsWithChildren,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { PropsWithChildren, useCallback, useMemo, useRef } from 'react';
 import {
-  Image,
   LayoutChangeEvent,
   StyleProp,
   StyleSheet,
@@ -17,9 +10,12 @@ import {
 import Animated, {
   AnimatableValue,
   AnimationCallback,
+  DerivedValue,
   runOnJS,
   SharedValue,
+  useAnimatedProps,
   useAnimatedStyle,
+  useDerivedValue,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
@@ -35,8 +31,10 @@ import {
 } from 'react-native-gesture-handler';
 import { GestureStateManagerType } from 'react-native-gesture-handler/lib/typescript/handlers/gestures/gestureStateManager';
 
-const zoomInIcon = require('../assets/zoomIn.png');
-const zoomOutIcon = require('../assets/zoomOut.png');
+const iconsButton = {
+  1: require('../assets/zoomIn.png'),
+  2: require('../assets/zoomOut.png'),
+};
 
 interface UseZoomGestureProps {
   animationFunction?: (toValue: number, config?: object) => any;
@@ -51,9 +49,11 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
   onLayoutContent: (event: LayoutChangeEvent) => void;
   zoomOut: () => void;
   zoomIn: () => void;
-  isZoomedIn: SharedValue<boolean>;
-  zoomIcon: Image;
-  zoomGestureLastTime: SharedValue<Number>;
+  isZoomedIn: DerivedValue<boolean>;
+  currentIconId: SharedValue<number>;
+  zoomGestureLastTime: SharedValue<number>;
+  lastScale: SharedValue<number>;
+  handleZoom: () => void;
 } {
   const {
     animationFunction = withTiming,
@@ -64,10 +64,19 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
   const baseScale = useSharedValue(1);
   const pinchScale = useSharedValue(1);
   const lastScale = useSharedValue(1);
-  const isZoomedIn = useSharedValue(false);
-  const [zoomIcon, setZoomIcon] = useState(zoomInIcon);
-  const zoomGestureLastTime = useSharedValue(0);
+  const isZoomedIn = useDerivedValue(() => {
+    if (lastScale.value > 1 && onZoomBegin) {
+      runOnJS(onZoomBegin)();
+    }
 
+    return lastScale.value > 1;
+  });
+
+  const currentIconId = useDerivedValue(() => {
+    return lastScale.value > 2.5 ? 2 : 1;
+  });
+
+  const zoomGestureLastTime = useSharedValue(0);
   const containerDimensions = useSharedValue({ width: 0, height: 0 });
   const contentDimensions = useSharedValue({ width: 1, height: 1 });
 
@@ -78,8 +87,9 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
   const panStartOffsetX = useSharedValue(0);
   const panStartOffsetY = useSharedValue(0);
 
-  const handlePanOutsideTimeoutId: React.MutableRefObject<number | undefined> =
-    useRef();
+  const handlePanOutsideTimeoutId: React.MutableRefObject<
+    ReturnType<typeof setTimeout> | undefined
+  > = useRef();
 
   const withAnimation = useCallback(
     (toValue: number, config?: object) => {
@@ -104,33 +114,17 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
   }, [containerDimensions]);
 
   const zoomIn = useCallback((): void => {
-    const { width, height } = getContentContainerSize();
-
-    // TODO: MAKE SMARTER CHOICE BASED ON AVAILABLE FREE VERTICAL SPACE
-    let newScale =
-      width > height ? (width / height) * 0.8 : (height / width) * 0.8;
-    if (newScale < 2.5) newScale = 2.5;
-    else if (newScale > 1.5) newScale = 1.5;
+    let newScale = lastScale.value * 1.6;
 
     lastScale.value = newScale;
+
+    console.log('newScale', newScale);
 
     baseScale.value = withAnimation(newScale);
     pinchScale.value = withAnimation(1);
 
-    const newOffsetX = 0;
-    lastOffsetX.value = newOffsetX;
-
-    const newOffsetY = 0;
-    lastOffsetY.value = newOffsetY;
-
-    translateX.value = newOffsetX;
-    translateY.value = newOffsetY;
-
-    isZoomedIn.value = true;
-    setZoomIcon(zoomOutIcon);
-
-    if (onZoomBegin) {
-      runOnJS(onZoomBegin)();
+    if (lastScale.value > 2.5) {
+      // setZoomIcon(zoomOutIcon);
     }
   }, [
     baseScale,
@@ -139,7 +133,6 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
     lastOffsetY,
     translateX,
     translateY,
-    isZoomedIn,
     lastScale,
     getContentContainerSize,
     withAnimation,
@@ -161,8 +154,7 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
     translateX.value = withAnimation(newOffsetX);
     translateY.value = withAnimation(newOffsetY);
 
-    isZoomedIn.value = false;
-    setZoomIcon(zoomInIcon);
+    // setZoomIcon(zoomInIcon);
   }, [
     baseScale,
     pinchScale,
@@ -230,9 +222,9 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
   ]);
 
   const onDoubleTap = useCallback((): void => {
-    if (isZoomedIn.value) zoomOut();
+    if (lastScale.value >= 2.5) zoomOut();
     else zoomIn();
-  }, [zoomIn, zoomOut, isZoomedIn]);
+  }, [zoomIn, zoomOut]);
 
   const onLayout = useCallback(
     ({
@@ -267,7 +259,6 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
       const newScale = lastScale.value * scale;
       lastScale.value = newScale;
       if (newScale > 1) {
-        isZoomedIn.value = true;
         baseScale.value = newScale;
         pinchScale.value = 1;
 
@@ -355,9 +346,6 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
     const pinchGesture = Gesture.Pinch()
       .onStart(() => {
         updateZoomGestureLastTime();
-        if (onZoomBegin) {
-          runOnJS(onZoomBegin)();
-        }
       })
       .onUpdate(
         ({
@@ -405,16 +393,24 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
     ],
   }));
 
+  const handleZoom = () => {
+    if (lastScale.value >= 2.5) {
+      zoomOut();
+    } else {
+      zoomIn();
+    }
+  };
+
   return {
     zoomGesture,
     contentContainerAnimatedStyle,
     onLayout,
     onLayoutContent,
-    zoomOut,
-    zoomIn,
     isZoomedIn,
-    zoomIcon,
     zoomGestureLastTime,
+    lastScale,
+    handleZoom,
+    currentIconId,
   };
 }
 
@@ -425,24 +421,28 @@ export default function Zoom(
 
   const {
     zoomGesture,
-    zoomIn,
-    zoomOut,
-    isZoomedIn,
     onLayout,
-    zoomIcon,
     onLayoutContent,
     contentContainerAnimatedStyle,
+    lastScale,
+    handleZoom,
+    currentIconId,
   } = useZoomGesture({
     ...rest,
   });
 
-  const handlePressZoom = () => {
-    if (isZoomedIn.value) {
-      zoomOut();
-    } else {
-      zoomIn();
-    }
+  const getIconOpacityStyle = (id: string) => {
+    return useAnimatedStyle(() => ({
+      //change opacity in UI thread.
+      opacity: id.toString() === currentIconId.value.toString() ? 1 : 0,
+    }));
   };
+
+  const childrenAnimatedProps = useAnimatedProps(() => {
+    return {
+      scrollEnabled: lastScale.value <= 1.2,
+    };
+  });
 
   return (
     <GestureDetector gesture={zoomGesture}>
@@ -455,13 +455,20 @@ export default function Zoom(
           style={[contentContainerAnimatedStyle, contentContainerStyle]}
           onLayout={onLayoutContent}
         >
-          {React.cloneElement(children, {scrollEnabled: !isZoomedIn.value})}
+          {React.cloneElement(children, {
+            animatedProps: childrenAnimatedProps,
+          })}
         </Animated.View>
-        <TouchableOpacity onPress={handlePressZoom} style={styles.zoomButton}>
-          <Animated.Image
-            source={zoomIcon}
-            style={{ width: 30, height: 30, tintColor: 'white' }}
-          />
+        <TouchableOpacity
+          onPress={handleZoom}
+          style={styles.zoomButtonContainer}
+        >
+          {Object.entries(iconsButton).map(icon => (
+            <Animated.Image
+              source={icon[1]}
+              style={[styles.zoomButtonImage, getIconOpacityStyle(icon[0])]}
+            />
+          ))}
         </TouchableOpacity>
       </View>
     </GestureDetector>
@@ -488,7 +495,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     overflow: 'hidden',
   },
-  zoomButton: {
+  zoomButtonContainer: {
     backgroundColor: '#ff5722',
     overflow: 'hidden',
     borderRadius: 50,
@@ -496,7 +503,15 @@ const styles = StyleSheet.create({
     padding: 8,
     right: 45,
     bottom: 45,
+    width: 56,
+    height: 56,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  zoomButtonImage: {
+    width: 30,
+    height: 30,
+    tintColor: 'white',
+    position: 'absolute',
   },
 });

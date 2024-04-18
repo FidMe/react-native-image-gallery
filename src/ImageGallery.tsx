@@ -7,9 +7,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import Animated, { useAnimatedRef } from 'react-native-reanimated';
 import { ImageObject, IProps, RenderImageProps } from './types';
 import ImagePreview from './ImagePreview';
-import SwipeContainer from './SwipeContainer';
 import Zoom from './Zoom';
 
 const { width: deviceWidth } = Dimensions.get('window');
@@ -27,7 +27,6 @@ const defaultProps = {
 
 const ImageGallery = (props: IProps & typeof defaultProps) => {
   const {
-    close,
     hideThumbs,
     images,
     initialIndex,
@@ -40,7 +39,6 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
     thumbResizeMode,
     thumbSize,
     thumbOffset,
-    disableSwipe,
     onEndReached,
     onPressPreviewImage,
     onPageChange,
@@ -49,9 +47,8 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
   } = props;
 
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
   const [autoScrollActive, setAutoScrollActive] = useState(autoScroll > 0);
-  const topRef = useRef<FlatList>(null);
+  const topRef = useAnimatedRef<Animated.FlatList>();
   const bottomRef = useRef<FlatList>(null);
 
   const keyExtractorThumb = (item: ImageObject, index: number) =>
@@ -206,28 +203,21 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
         </View>
       ) : null}
       <View style={{ flex: 1 }}>
-        <SwipeContainer
-          disableSwipe={disableSwipe}
-          setIsDragging={setIsDragging}
-          close={close}
-        >
-          <Zoom onZoomBegin={handleImagePreviewZoomBegin}>
-            <FlatList
-              initialScrollIndex={initialIndex}
-              getItemLayout={getImageLayout}
-              data={images}
-              horizontal
-              keyExtractor={keyExtractorImage}
-              onMomentumScrollEnd={onMomentumEnd}
-              pagingEnabled
-              ref={topRef}
-              renderItem={renderItem}
-              scrollEnabled={!isDragging}
-              showsHorizontalScrollIndicator={false}
-              onScrollBeginDrag={handleManualScroll}
-            />
-          </Zoom>
-        </SwipeContainer>
+        <Zoom onZoomBegin={handleImagePreviewZoomBegin}>
+          <Animated.FlatList
+            data={images}
+            initialScrollIndex={initialIndex}
+            getItemLayout={getImageLayout}
+            horizontal
+            keyExtractor={keyExtractorImage}
+            onMomentumScrollEnd={onMomentumEnd}
+            pagingEnabled
+            ref={topRef}
+            renderItem={renderItem}
+            showsHorizontalScrollIndicator={false}
+            onScrollBeginDrag={handleManualScroll}
+          />
+        </Zoom>
       </View>
       {hideThumbs ? null : (
         <View>
