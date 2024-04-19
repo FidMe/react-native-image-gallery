@@ -7,7 +7,10 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import Animated, { useAnimatedRef } from 'react-native-reanimated';
+import Animated, {
+  useAnimatedRef,
+  useDerivedValue,
+} from 'react-native-reanimated';
 import { ImageObject, IProps, RenderImageProps } from './types';
 import ImagePreview from './ImagePreview';
 import Zoom from './Zoom';
@@ -23,6 +26,7 @@ const defaultProps = {
   thumbOffset: 10,
   autoScroll: 0,
   disableAutoScroll: false,
+  enableManualZoom: false,
 };
 
 const ImageGallery = (props: IProps & typeof defaultProps) => {
@@ -44,10 +48,16 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
     onPageChange,
     autoScroll,
     disableAutoScroll,
+    enableManualZoom,
   } = props;
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [autoScrollActive, setAutoScrollActive] = useState(autoScroll > 0);
+  const isManualZoomEnabled = useDerivedValue(
+    () => !autoScrollActive && enableManualZoom,
+    [autoScrollActive, enableManualZoom]
+  );
+
   const topRef = useAnimatedRef<Animated.FlatList>();
   const bottomRef = useRef<FlatList>(null);
 
@@ -203,7 +213,10 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
         </View>
       ) : null}
       <View style={{ flex: 1 }}>
-        <Zoom onZoomBegin={handleImagePreviewZoomBegin}>
+        <Zoom
+          onZoomBegin={handleImagePreviewZoomBegin}
+          isManualZoomEnabled={isManualZoomEnabled}
+        >
           <Animated.FlatList
             data={images}
             initialScrollIndex={initialIndex}

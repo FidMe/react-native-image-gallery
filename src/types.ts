@@ -16,6 +16,7 @@ export interface IProps {
   onPressPreviewImage?: (item: ImageObject) => void;
   onPageChange?: (index: number) => void;
   disableAutoScroll?: boolean;
+  enableManualZoom?: boolean;
 
   renderCustomThumb?: (
     item: ImageObject,
