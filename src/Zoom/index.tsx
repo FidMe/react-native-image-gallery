@@ -3,9 +3,9 @@ import {
   LayoutChangeEvent,
   StyleProp,
   StyleSheet,
-  TouchableOpacity,
   View,
   ViewProps,
+  TouchableOpacity,
 } from 'react-native';
 import Animated, {
   AnimatableValue,
@@ -116,6 +116,8 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
   const zoomIn = useCallback((): void => {
     let newScale = lastScale.value * 1.6;
 
+    console.log('Zoom in', newScale);
+
     lastScale.value = newScale;
 
     baseScale.value = withAnimation(newScale);
@@ -135,6 +137,7 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
   ]);
 
   const zoomOut = useCallback((): void => {
+    console.log('zoom out');
     const newScale = 1;
     lastScale.value = newScale;
 
@@ -218,9 +221,13 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
     withAnimation,
   ]);
 
-  const onDoubleTap = useCallback((): void => {
-    if (lastScale.value >= 2.5) zoomOut();
-    else zoomIn();
+  const handleZoom = useCallback(() => {
+    console.log('handleZoom');
+    if (lastScale.value >= 2.5) {
+      zoomOut();
+    } else {
+      zoomIn();
+    }
   }, [zoomIn, zoomOut]);
 
   const onLayout = useCallback(
@@ -281,14 +288,14 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
       })
       .onEnd(() => {
         updateZoomGestureLastTime();
-
-        runOnJS(onDoubleTap)();
+        runOnJS(handleZoom)();
       });
 
     const panGesture = Gesture.Pan()
       .onStart(
         (event: GestureUpdateEvent<PanGestureHandlerEventPayload>): void => {
           updateZoomGestureLastTime();
+          console.log(`[onStart] gesturePan x: ${event.x},y: ${event.y}`);
 
           const { translationX, translationY } = event;
 
@@ -373,7 +380,7 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
     handlePanOutside,
     lastOffsetX,
     lastOffsetY,
-    onDoubleTap,
+    handleZoom,
     onPinchEnd,
     pinchScale,
     translateX,
@@ -389,14 +396,6 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
       { translateY: translateY.value },
     ],
   }));
-
-  const handleZoom = useCallback(() => {
-    if (lastScale.value >= 2.5) {
-      zoomOut();
-    } else {
-      zoomIn();
-    }
-  }, [zoomIn, zoomOut]);
 
   return {
     zoomGesture,
@@ -442,33 +441,37 @@ export default function Zoom(
   });
 
   return (
-    <GestureDetector gesture={zoomGesture}>
-      <View
-        style={[styles.container, style]}
-        onLayout={onLayout}
-        collapsable={false}
+    <>
+      <GestureDetector gesture={zoomGesture}>
+        <View
+          style={[styles.container, style]}
+          onLayout={onLayout}
+          collapsable={false}
+        >
+          <Animated.View
+            style={[contentContainerAnimatedStyle, contentContainerStyle]}
+            onLayout={onLayoutContent}
+          >
+            {React.cloneElement(children, {
+              animatedProps: childrenAnimatedProps,
+            })}
+          </Animated.View>
+        </View>
+      </GestureDetector>
+      <TouchableOpacity
+        key="zoom-button"
+        onPress={handleZoom}
+        style={styles.zoomButtonContainer}
       >
-        <Animated.View
-          style={[contentContainerAnimatedStyle, contentContainerStyle]}
-          onLayout={onLayoutContent}
-        >
-          {React.cloneElement(children, {
-            animatedProps: childrenAnimatedProps,
-          })}
-        </Animated.View>
-        <TouchableOpacity
-          onPress={handleZoom}
-          style={styles.zoomButtonContainer}
-        >
-          {Object.entries(iconsButton).map(icon => (
-            <Animated.Image
-              source={icon[1]}
-              style={[styles.zoomButtonImage, getIconOpacityStyle(icon[0])]}
-            />
-          ))}
-        </TouchableOpacity>
-      </View>
-    </GestureDetector>
+        {Object.entries(iconsButton).map(icon => (
+          <Animated.Image
+            key={icon[0]}
+            source={icon[1]}
+            style={[styles.zoomButtonImage, getIconOpacityStyle(icon[0])]}
+          />
+        ))}
+      </TouchableOpacity>
+    </>
   );
 }
 
