@@ -7,9 +7,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import Animated, {
+  useAnimatedRef,
+  useDerivedValue,
+} from 'react-native-reanimated';
 import { ImageObject, IProps, RenderImageProps } from './types';
 import ImagePreview from './ImagePreview';
-import SwipeContainer from './SwipeContainer';
+import Zoom from './Zoom';
 
 const { width: deviceWidth } = Dimensions.get('window');
 
@@ -22,11 +26,11 @@ const defaultProps = {
   thumbOffset: 10,
   autoScroll: 0,
   disableAutoScroll: false,
+  enableManualZoom: false,
 };
 
 const ImageGallery = (props: IProps & typeof defaultProps) => {
   const {
-    close,
     hideThumbs,
     images,
     initialIndex,
@@ -39,18 +43,22 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
     thumbResizeMode,
     thumbSize,
     thumbOffset,
-    disableSwipe,
     onEndReached,
     onPressPreviewImage,
     onPageChange,
     autoScroll,
     disableAutoScroll,
+    enableManualZoom,
   } = props;
 
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
   const [autoScrollActive, setAutoScrollActive] = useState(autoScroll > 0);
-  const topRef = useRef<FlatList>(null);
+  const isManualZoomEnabled = useDerivedValue(
+    () => !autoScrollActive && enableManualZoom,
+    [autoScrollActive, enableManualZoom]
+  );
+
+  const topRef = useAnimatedRef<Animated.FlatList>();
   const bottomRef = useRef<FlatList>(null);
 
   const keyExtractorThumb = (item: ImageObject, index: number) =>
@@ -91,6 +99,11 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
     }
   };
 
+  const handlePressPreview = (item: ImageObject) => {
+    setAutoScrollActive(false);
+    onPressPreviewImage?.(item);
+  };
+
   const renderItem = ({ item, index }: RenderImageProps) => {
     return (
       <ImagePreview
@@ -99,8 +112,7 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
         item={item}
         resizeMode={resizeMode}
         renderCustomImage={renderCustomImage}
-        onPress={onPressPreviewImage}
-        onZoomBegin={handleImagePreviewZoomBegin}
+        onPress={handlePressPreview}
       />
     );
   };
@@ -206,26 +218,24 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
         </View>
       ) : null}
       <View style={{ flex: 1 }}>
-        <SwipeContainer
-          disableSwipe={disableSwipe}
-          setIsDragging={setIsDragging}
-          close={close}
+        <Zoom
+          onZoomBegin={handleImagePreviewZoomBegin}
+          isManualZoomEnabled={isManualZoomEnabled}
         >
-          <FlatList
+          <Animated.FlatList
+            data={images}
             initialScrollIndex={initialIndex}
             getItemLayout={getImageLayout}
-            data={images}
             horizontal
             keyExtractor={keyExtractorImage}
             onMomentumScrollEnd={onMomentumEnd}
             pagingEnabled
             ref={topRef}
             renderItem={renderItem}
-            scrollEnabled={!isDragging}
             showsHorizontalScrollIndicator={false}
             onScrollBeginDrag={handleManualScroll}
           />
-        </SwipeContainer>
+        </Zoom>
       </View>
       {hideThumbs ? null : (
         <View>
