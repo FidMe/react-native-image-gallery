@@ -49,9 +49,7 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
   onLayoutContent: (event: LayoutChangeEvent) => void;
   zoomOut: () => void;
   zoomIn: () => void;
-  isZoomedIn: DerivedValue<boolean>;
   currentIconId: SharedValue<number>;
-  zoomGestureLastTime: SharedValue<number>;
   lastScale: SharedValue<number>;
   handleZoom: () => void;
   isDragging: SharedValue<boolean>;
@@ -67,11 +65,13 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
   const lastScale = useSharedValue(1);
   const isDragging = useSharedValue(false);
   const isZoomedIn = useDerivedValue(() => {
-    if (lastScale.value > 1 && onZoomBegin) {
+    const isZoomed = lastScale.value > 1;
+
+    if (isZoomed && onZoomBegin) {
       runOnJS(onZoomBegin)();
     }
 
-    return lastScale.value > 1;
+    return isZoomed;
   });
 
   const currentIconId = useDerivedValue(() => {
@@ -151,8 +151,6 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
 
     translateX.value = withAnimation(newOffsetX);
     translateY.value = withAnimation(newOffsetY);
-
-    // setZoomIcon(zoomInIcon);
   }, [
     baseScale,
     pinchScale,
@@ -221,7 +219,6 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
   ]);
 
   const handleZoom = useCallback(() => {
-    console.log('handleZoom');
     if (lastScale.value >= 2.5) {
       zoomOut();
     } else {
@@ -294,7 +291,6 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
       .onStart(
         (event: GestureUpdateEvent<PanGestureHandlerEventPayload>): void => {
           updateZoomGestureLastTime();
-          console.log(`[onStart] gesturePan x: ${event.x},y: ${event.y}`);
 
           const { translationX, translationY } = event;
 
@@ -407,8 +403,6 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
     contentContainerAnimatedStyle,
     onLayout,
     onLayoutContent,
-    isZoomedIn,
-    zoomGestureLastTime,
     lastScale,
     handleZoom,
     currentIconId,
@@ -448,8 +442,8 @@ export default function Zoom(
   };
 
   const manualZoomButtonAnimatedStyle = useAnimatedStyle(() => {
-    const maskButton = isDragging.value || !isManualZoomEnabled.value;
-    return { opacity: withTiming(maskButton ? 0 : 1) };
+    const hideButton = isDragging.value || !isManualZoomEnabled.value;
+    return { opacity: withTiming(hideButton ? 0 : 1) };
   });
 
   const childrenAnimatedProps = useAnimatedProps(() => {

@@ -99,6 +99,11 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
     }
   };
 
+  const handlePressPreview = (item: ImageObject) => {
+    setAutoScrollActive(false);
+    onPressPreviewImage?.(item);
+  };
+
   const renderItem = ({ item, index }: RenderImageProps) => {
     return (
       <ImagePreview
@@ -107,7 +112,7 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
         item={item}
         resizeMode={resizeMode}
         renderCustomImage={renderCustomImage}
-        onPress={onPressPreviewImage}
+        onPress={handlePressPreview}
       />
     );
   };
