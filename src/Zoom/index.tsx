@@ -17,6 +17,7 @@ import Animated, {
   useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
+  withDelay,
   withTiming,
 } from 'react-native-reanimated';
 import {
@@ -75,7 +76,7 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
   });
 
   const currentIconId = useDerivedValue(() => {
-    return lastScale.value > 2.5 ? 2 : 1;
+    return lastScale.value >= 2.5 ? 2 : 1;
   });
 
   const zoomGestureLastTime = useSharedValue(0);
@@ -116,7 +117,7 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
   }, [containerDimensions]);
 
   const zoomIn = useCallback((): void => {
-    let newScale = lastScale.value * 1.6;
+    let newScale = 2.5;
 
     lastScale.value = newScale;
 
@@ -443,7 +444,9 @@ export default function Zoom(
 
   const manualZoomButtonAnimatedStyle = useAnimatedStyle(() => {
     const hideButton = isDragging.value || !isManualZoomEnabled.value;
-    return { opacity: withTiming(hideButton ? 0 : 1) };
+    return {
+      opacity: withDelay(hideButton ? 0 : 1000, withTiming(hideButton ? 0 : 1)),
+    };
   });
 
   const childrenAnimatedProps = useAnimatedProps(() => {
@@ -512,7 +515,7 @@ const styles = StyleSheet.create({
   },
   zoomButtonWrapper: {},
   zoomButtonContainer: {
-    backgroundColor: '#ff5722',
+    backgroundColor: '#2E2B2B',
     overflow: 'hidden',
     borderRadius: 50,
     position: 'absolute',

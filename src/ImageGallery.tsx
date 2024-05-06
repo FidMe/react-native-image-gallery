@@ -10,6 +10,7 @@ import {
 import Animated, {
   useAnimatedRef,
   useDerivedValue,
+  useSharedValue,
 } from 'react-native-reanimated';
 import { ImageObject, IProps, RenderImageProps } from './types';
 import ImagePreview from './ImagePreview';
@@ -53,8 +54,9 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [autoScrollActive, setAutoScrollActive] = useState(autoScroll > 0);
+  const isScrolling = useSharedValue(false);
   const isManualZoomEnabled = useDerivedValue(
-    () => !autoScrollActive && enableManualZoom,
+    () => !autoScrollActive && enableManualZoom && !isScrolling.value,
     [autoScrollActive, enableManualZoom]
   );
 
@@ -207,7 +209,12 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
   );
 
   const handleManualScroll = () => {
+    isScrolling.value = true;
     setAutoScrollActive(false);
+  };
+
+  const onScrollEnd = () => {
+    isScrolling.value = false;
   };
 
   return (
@@ -234,6 +241,7 @@ const ImageGallery = (props: IProps & typeof defaultProps) => {
             renderItem={renderItem}
             showsHorizontalScrollIndicator={false}
             onScrollBeginDrag={handleManualScroll}
+            onScrollEndDrag={onScrollEnd}
           />
         </Zoom>
       </View>
