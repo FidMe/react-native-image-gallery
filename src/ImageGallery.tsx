@@ -18,38 +18,26 @@ import Zoom from './Zoom';
 
 const { width: deviceWidth } = Dimensions.get('window');
 
-const defaultProps = {
-  hideThumbs: false,
-  resizeMode: 'contain',
-  thumbColor: '#d9b44a',
-  thumbResizeMode: 'cover',
-  thumbSize: 48,
-  thumbOffset: 10,
-  autoScroll: 0,
-  disableAutoScroll: false,
-  enableManualZoom: false,
-};
-
-const ImageGallery = (props: IProps & typeof defaultProps) => {
+const ImageGallery = (props: IProps) => {
   const {
-    hideThumbs,
+    hideThumbs = false,
     images,
     initialIndex,
     renderCustomImage,
     renderCustomThumb,
     renderFooterComponent,
     renderHeaderComponent,
-    resizeMode,
-    thumbColor,
-    thumbResizeMode,
-    thumbSize,
-    thumbOffset,
+    resizeMode = "contain",
+    thumbColor = "#d9b44a",
+    thumbResizeMode = "cover",
+    thumbSize = 48,
+    thumbOffset= 10,
     onEndReached,
     onPressPreviewImage,
     onPageChange,
-    autoScroll,
-    disableAutoScroll,
-    enableManualZoom,
+    autoScroll = 0,
+    disableAutoScroll = false,
+    enableManualZoom = false,
   } = props;
 
   const [activeIndex, setActiveIndex] = useState(0);
@@ -301,7 +289,5 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
 });
-
-ImageGallery.defaultProps = defaultProps;
 
 export default ImageGallery;
