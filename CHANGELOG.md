@@ -1,6 +1,16 @@
 # Changelog
 
-## [v1.6.6](https://github.com/FidMe/react-native-image-gallery/compare/v1.6.5...v1.6.6)
+## [v1.8.0](https://github.com/FidMe/react-native-image-gallery/compare/v1.6.6...v1.8.0)
+
+#### Features
+
+- feat: add zoom button ([`#15`](https://github.com/FidMe/react-native-image-gallery/pull/15)).
+
+#### Fixes
+
+- fix: 🐛 disable manual zoom when user scroll list ([`#16`](https://github.com/FidMe/react-native-image-gallery/pull/16)).
+
+## [v1.6.6](https://github.com/FidMe/react-native-image-gallery/compare/v1.6.5...v1.6.6) - 2024-01-30
 
 #### Fixes
 
@@ -14,14 +24,12 @@
 
 - fix: 🐛 adjust default double tap zoom ([`#13`](https://github.com/FidMe/react-native-image-gallery/pull/13)).
 
-## [v1.6.3](https://github.com/FidMe/react-native-image-gallery/compare/v1.6.2...v1.6.3) - 2024-01-29
+## [v1.6.3](https://github.com/FidMe/react-native-image-gallery/compare/v1.6.1...v1.6.3) - 2024-01-29
 
 #### Fixes
 
 - fix: 🐛 disable scroll when user use NaN as scrolling index ([`#12`](https://github.com/FidMe/react-native-image-gallery/pull/12)).
 - fix: 🐛 disable scrollToIndex if empty images array ([`#11`](https://github.com/FidMe/react-native-image-gallery/pull/11)).
-
-## [v1.6.2](https://github.com/FidMe/react-native-image-gallery/compare/v1.6.1...v1.6.2) - 2024-01-29
 
 ## [v1.6.1](https://github.com/FidMe/react-native-image-gallery/compare/v1.6.0...v1.6.1) - 2024-01-24
 
