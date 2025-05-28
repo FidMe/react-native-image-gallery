@@ -473,7 +473,7 @@ export default function Zoom(
           </Animated.View>
         </View>
       </GestureDetector>
-      <Animated.View style={manualZoomButtonAnimatedStyle}>
+      <Animated.View style={[styles.zoomButtonWrapper, manualZoomButtonAnimatedStyle]}>
         <TouchableOpacity
           key="zoom-button"
           onPress={handleZoom}
@@ -513,15 +513,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     overflow: 'hidden',
   },
-  zoomButtonWrapper: {},
+  zoomButtonWrapper: {
+    position: 'absolute',
+    right: 40,
+    bottom: 40,
+  },
   zoomButtonContainer: {
     backgroundColor: '#2E2B2B',
     overflow: 'hidden',
     borderRadius: 50,
-    position: 'absolute',
     padding: 8,
-    right: 40,
-    bottom: 40,
     width: 56,
     height: 56,
     alignItems: 'center',
