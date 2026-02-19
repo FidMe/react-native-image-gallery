@@ -1,293 +1,94 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
-import {
-  Dimensions,
-  FlatList,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import Animated, {
-  useAnimatedRef,
-  useDerivedValue,
-  useSharedValue,
-} from 'react-native-reanimated';
-import { ImageObject, IProps, RenderImageProps } from './types';
-import ImagePreview from './ImagePreview';
-import Zoom from './Zoom';
+import React from 'react';
+import { ImageGalleryProps, HorizontalGalleryProps, VerticalFeedProps } from './types';
+import { HorizontalGallery } from './horizontal';
+import { VerticalFeed } from './vertical';
 
-const { width: deviceWidth } = Dimensions.get('window');
-
-const ImageGallery = (props: IProps) => {
+const ImageGallery = (props: ImageGalleryProps) => {
   const {
-    hideThumbs = false,
+    mode,
+    horizontal,
+    // Legacy prop mapping
+    enableManualZoom,
+    onPressPreviewImage,
+    // Base props
     images,
     initialIndex,
-    renderCustomImage,
-    renderCustomThumb,
-    renderFooterComponent,
-    renderHeaderComponent,
-    resizeMode = "contain",
-    thumbColor = "#d9b44a",
-    thumbResizeMode = "cover",
-    thumbSize = 48,
-    thumbOffset= 10,
-    onEndReached,
-    onPressPreviewImage,
+    resizeMode,
     onPageChange,
-    autoScroll = 0,
-    disableAutoScroll = false,
-    enableManualZoom = false,
+    renderCustomImage,
+    renderHeaderComponent,
+    renderFooterComponent,
+    // Horizontal-specific props
+    hideThumbs,
+    thumbColor,
+    thumbSize,
+    thumbOffset,
+    thumbResizeMode,
+    renderCustomThumb,
+    disableSwipe,
+    autoScroll,
+    disableAutoScroll,
+    close,
+    // Vertical-specific props
+    onEndReached,
+    onEndReachedThreshold,
+    ListHeaderComponent,
+    contentContainerStyle,
+    // New props
+    enableZoom,
+    onPressImage,
   } = props;
 
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [autoScrollActive, setAutoScrollActive] = useState(autoScroll > 0);
-  const isScrolling = useSharedValue(false);
-  const isManualZoomEnabled = useDerivedValue(
-    () => !autoScrollActive && enableManualZoom && !isScrolling.value,
-    [autoScrollActive, enableManualZoom]
-  );
+  // Determine effective mode: new 'mode' prop takes precedence over deprecated 'horizontal'
+  const effectiveMode = mode ?? (horizontal === false ? 'vertical' : 'horizontal');
 
-  const topRef = useAnimatedRef<Animated.FlatList>();
-  const bottomRef = useRef<FlatList>(null);
+  // Map legacy props to new props
+  const effectiveEnableZoom = enableZoom ?? enableManualZoom;
+  const effectiveOnPressImage = onPressImage ?? onPressPreviewImage;
 
-  const keyExtractorThumb = (item: ImageObject, index: number) =>
-    item && item.id ? item.id.toString() : index.toString();
-  const keyExtractorImage = (item: ImageObject, index: number) =>
-    item && item.id ? item.id.toString() : index.toString();
-
-  const scrollToIndex = (i: number, scrollTopView: boolean = false) => {
-    const isValidIndex = Number.isFinite(i);
-
-    if (!isValidIndex) {
-      setAutoScrollActive(false);
-    }
-
-    if (isValidIndex && i !== activeIndex) {
-      onPageChange?.(i);
-      setActiveIndex(i);
-
-      if (topRef?.current && scrollTopView) {
-        topRef.current.scrollToIndex({
-          animated: true,
-          index: i,
-        });
-      }
-      if (bottomRef?.current) {
-        if (i * (thumbSize + 10) - thumbSize / 2 > deviceWidth / 2) {
-          bottomRef?.current?.scrollToIndex({
-            animated: true,
-            index: i,
-          });
-        } else {
-          bottomRef?.current?.scrollToIndex({
-            animated: true,
-            index: 0,
-          });
-        }
-      }
-    }
-  };
-
-  const handlePressPreview = (item: ImageObject) => {
-    setAutoScrollActive(false);
-    onPressPreviewImage?.(item);
-  };
-
-  const renderItem = ({ item, index }: RenderImageProps) => {
-    return (
-      <ImagePreview
-        index={index}
-        isSelected={activeIndex === index}
-        item={item}
-        resizeMode={resizeMode}
-        renderCustomImage={renderCustomImage}
-        onPress={handlePressPreview}
-      />
-    );
-  };
-
-  const handleImagePreviewZoomBegin = () => {
-    setAutoScrollActive(false);
-  };
-
-  const renderThumb = ({ item, index }: RenderImageProps) => {
-    return (
-      <TouchableOpacity
-        onPress={() => scrollToIndex(index, true)}
-        activeOpacity={0.8}
-      >
-        {renderCustomThumb ? (
-          renderCustomThumb(item, index, activeIndex === index)
-        ) : (
-          <Image
-            resizeMode={thumbResizeMode}
-            style={
-              activeIndex === index
-                ? [
-                    styles.thumb,
-                    styles.activeThumb,
-                    { borderColor: thumbColor },
-                    { width: thumbSize, height: thumbSize },
-                  ]
-                : [styles.thumb, { width: thumbSize, height: thumbSize }]
-            }
-            source={
-              item.thumbnail?.source ? item.thumbnail?.source : item.source
-            }
-          />
-        )}
-      </TouchableOpacity>
-    );
-  };
-
-  const onMomentumEnd = (e: any) => {
-    const { x } = e.nativeEvent.contentOffset;
-    scrollToIndex(Math.round(x / deviceWidth));
-  };
-
-  useEffect(() => {
-    let autoScrollTimer: number;
-
-    if (autoScrollActive && !disableAutoScroll) {
-      autoScrollTimer = setInterval(() => {
-        const nextIndex = (activeIndex + 1) % images.length;
-        scrollToIndex(nextIndex, true);
-        if (nextIndex === 0) {
-          setAutoScrollActive(false);
-        }
-      }, autoScroll);
-    }
-
-    return () => {
-      clearInterval(autoScrollTimer);
+  if (effectiveMode === 'vertical') {
+    const verticalProps: VerticalFeedProps = {
+      images,
+      initialIndex,
+      resizeMode,
+      enableZoom: effectiveEnableZoom,
+      onPageChange,
+      onPressImage: effectiveOnPressImage,
+      renderCustomImage,
+      renderHeaderComponent,
+      renderFooterComponent,
+      onEndReached,
+      onEndReachedThreshold,
+      ListHeaderComponent,
+      contentContainerStyle,
     };
-  }, [activeIndex, autoScrollActive, disableAutoScroll]);
 
-  useEffect(() => {
-    if (initialIndex) {
-      onPageChange?.(initialIndex);
-      setActiveIndex(initialIndex);
-    } else {
-      onPageChange?.(0);
-      setActiveIndex(0);
-    }
-  }, []);
+    return <VerticalFeed {...verticalProps} />;
+  }
 
-  const getImageLayout = useCallback(
-    (_, index) => {
-      return {
-        index,
-        length: deviceWidth,
-        offset: deviceWidth * index,
-      };
-    },
-    [images]
-  );
-
-  const getThumbLayout = useCallback(
-    (_, index) => {
-      return {
-        index,
-        length: thumbSize,
-        offset: thumbSize * index + thumbOffset * index,
-      };
-    },
-    [images]
-  );
-
-  const handleManualScroll = () => {
-    isScrolling.value = true;
-    setAutoScrollActive(false);
+  const horizontalProps: HorizontalGalleryProps = {
+    images,
+    initialIndex,
+    resizeMode,
+    enableZoom: effectiveEnableZoom,
+    onPageChange,
+    onPressImage: effectiveOnPressImage,
+    renderCustomImage,
+    renderHeaderComponent,
+    renderFooterComponent,
+    hideThumbs,
+    thumbColor,
+    thumbSize,
+    thumbOffset,
+    thumbResizeMode,
+    renderCustomThumb,
+    disableSwipe,
+    autoScroll,
+    disableAutoScroll,
+    close,
   };
 
-  const onScrollEnd = () => {
-    isScrolling.value = false;
-  };
-
-  return (
-    <View style={styles.container}>
-      {renderHeaderComponent ? (
-        <View style={styles.header}>
-          {renderHeaderComponent(images?.[activeIndex], activeIndex)}
-        </View>
-      ) : null}
-      <View style={{ flex: 1 }}>
-        <Zoom
-          onZoomBegin={handleImagePreviewZoomBegin}
-          isManualZoomEnabled={isManualZoomEnabled}
-        >
-          <Animated.FlatList
-            data={images}
-            initialScrollIndex={initialIndex}
-            getItemLayout={getImageLayout}
-            horizontal
-            keyExtractor={keyExtractorImage}
-            onMomentumScrollEnd={onMomentumEnd}
-            pagingEnabled
-            ref={topRef}
-            renderItem={renderItem}
-            showsHorizontalScrollIndicator={false}
-            onScrollBeginDrag={handleManualScroll}
-            onScrollEndDrag={onScrollEnd}
-          />
-        </Zoom>
-      </View>
-      {hideThumbs ? null : (
-        <View>
-          <FlatList
-            initialScrollIndex={initialIndex}
-            getItemLayout={getThumbLayout}
-            contentContainerStyle={styles.thumbnailListContainer}
-            data={props.images}
-            horizontal
-            keyExtractor={keyExtractorThumb}
-            ref={bottomRef}
-            renderItem={renderThumb}
-            showsHorizontalScrollIndicator={false}
-            ItemSeparatorComponent={() => (
-              <View style={{ width: thumbOffset }} />
-            )}
-            onEndReachedThreshold={0.2}
-            onEndReached={onEndReached}
-            style={styles.bottomFlatlist}
-            onScrollBeginDrag={handleManualScroll}
-          />
-        </View>
-      )}
-      {renderFooterComponent ? (
-        <View style={styles.footer}>
-          {renderFooterComponent(images[activeIndex], activeIndex)}
-        </View>
-      ) : null}
-    </View>
-  );
+  return <HorizontalGallery {...horizontalProps} />;
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    width: '100%',
-  },
-  footer: {
-    bottom: 0,
-    position: 'absolute',
-    width: '100%',
-  },
-  activeThumb: {
-    borderWidth: 3,
-  },
-  thumb: {
-    borderRadius: 12,
-  },
-  thumbnailListContainer: {
-    paddingHorizontal: 10,
-  },
-  bottomFlatlist: {
-    paddingVertical: 20,
-  },
-});
 
 export default ImageGallery;

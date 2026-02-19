@@ -1,28 +1,15 @@
-import React, { PropsWithChildren, useCallback, useMemo, useRef } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
+import { LayoutChangeEvent } from 'react-native';
 import {
-  LayoutChangeEvent,
-  StyleProp,
-  StyleSheet,
-  View,
-  ViewProps,
-  TouchableOpacity,
-} from 'react-native';
-import Animated, {
-  AnimatableValue,
-  AnimationCallback,
-  DerivedValue,
   runOnJS,
   SharedValue,
-  useAnimatedProps,
   useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
-  withDelay,
   withTiming,
 } from 'react-native-reanimated';
 import {
   Gesture,
-  GestureDetector,
   GestureStateChangeEvent,
   GestureTouchEvent,
   GestureUpdateEvent,
@@ -32,20 +19,15 @@ import {
 } from 'react-native-gesture-handler';
 import { GestureStateManagerType } from 'react-native-gesture-handler/lib/typescript/handlers/gestures/gestureStateManager';
 
-const iconsButton = {
-  1: require('../assets/zoomIn.png'),
-  2: require('../assets/zoomOut.png'),
-};
-
-interface UseZoomGestureProps {
+export interface UseZoomGestureProps {
   animationFunction?: (toValue: number, config?: object) => any;
   animationConfig?: object;
   onZoomBegin?: () => void;
 }
 
-export function useZoomGesture(props: UseZoomGestureProps = {}): {
+export interface UseZoomGestureReturn {
   zoomGesture: ReturnType<typeof Gesture.Exclusive>;
-  contentContainerAnimatedStyle: any;
+  contentContainerAnimatedStyle: ReturnType<typeof useAnimatedStyle>;
   onLayout: (event: LayoutChangeEvent) => void;
   onLayoutContent: (event: LayoutChangeEvent) => void;
   zoomOut: () => void;
@@ -54,7 +36,9 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
   lastScale: SharedValue<number>;
   handleZoom: () => void;
   isDragging: SharedValue<boolean>;
-} {
+}
+
+export function useZoomGesture(props: UseZoomGestureProps = {}): UseZoomGestureReturn {
   const {
     animationFunction = withTiming,
     animationConfig,
@@ -126,14 +110,7 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
   }, [
     baseScale,
     pinchScale,
-    lastOffsetX,
-    lastOffsetY,
-    translateX,
-    translateY,
     lastScale,
-    getContentContainerSize,
-    isZoomedIn,
-    currentIconId,
     withAnimation,
   ]);
 
@@ -160,8 +137,6 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
     translateX,
     translateY,
     lastScale,
-    isZoomedIn,
-    currentIconId,
     withAnimation,
   ]);
 
@@ -268,7 +243,7 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
         zoomOut();
       }
     },
-    [lastScale, baseScale, pinchScale, handlePanOutside, zoomOut, isZoomedIn]
+    [lastScale, baseScale, pinchScale, handlePanOutside, zoomOut]
   );
 
   const updateZoomGestureLastTime = useCallback((): void => {
@@ -389,6 +364,10 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
     translateY,
     lastScale,
     isZoomedIn,
+    updateZoomGestureLastTime,
+    panStartOffsetX,
+    panStartOffsetY,
+    isDragging,
   ]);
 
   const contentContainerAnimatedStyle = useAnimatedStyle(() => ({
@@ -412,128 +391,3 @@ export function useZoomGesture(props: UseZoomGestureProps = {}): {
     zoomOut,
   };
 }
-
-export default function Zoom(
-  props: PropsWithChildren<ZoomProps>
-): React.ReactElement {
-  const {
-    isManualZoomEnabled,
-    style,
-    contentContainerStyle,
-    children,
-    ...rest
-  } = props;
-
-  const {
-    zoomGesture,
-    onLayout,
-    onLayoutContent,
-    contentContainerAnimatedStyle,
-    lastScale,
-    handleZoom,
-    currentIconId,
-    isDragging,
-  } = useZoomGesture({
-    ...rest,
-  });
-
-  const getIconOpacityStyle = (id: string) => {
-    return useAnimatedStyle(() => ({
-      //change opacity in UI thread.
-      opacity: id.toString() === currentIconId.value.toString() ? 1 : 0,
-    }));
-  };
-
-  const manualZoomButtonAnimatedStyle = useAnimatedStyle(() => {
-    const hideButton = isDragging.value || !isManualZoomEnabled.value;
-    return {
-      opacity: withDelay(hideButton ? 0 : 1000, withTiming(hideButton ? 0 : 1)),
-    };
-  });
-
-  const childrenAnimatedProps = useAnimatedProps(() => {
-    return {
-      scrollEnabled: lastScale.value <= 1.2,
-    };
-  });
-
-  return (
-    <>
-      <GestureDetector gesture={zoomGesture}>
-        <View
-          style={[styles.container, style]}
-          onLayout={onLayout}
-          collapsable={false}
-        >
-          <Animated.View
-            style={[contentContainerAnimatedStyle, contentContainerStyle]}
-            onLayout={onLayoutContent}
-          >
-            {React.cloneElement(children as React.ReactElement, {
-              animatedProps: childrenAnimatedProps,
-            })}
-          </Animated.View>
-        </View>
-      </GestureDetector>
-      <Animated.View style={[styles.zoomButtonWrapper, manualZoomButtonAnimatedStyle]}>
-        <TouchableOpacity
-          key="zoom-button"
-          onPress={handleZoom}
-          style={[styles.zoomButtonContainer]}
-        >
-          {Object.entries(iconsButton).map(icon => (
-            <Animated.Image
-              key={icon[0]}
-              source={icon[1]}
-              style={[styles.zoomButtonImage, getIconOpacityStyle(icon[0])]}
-            />
-          ))}
-        </TouchableOpacity>
-      </Animated.View>
-    </>
-  );
-}
-
-export interface ZoomProps {
-  style?: StyleProp<ViewProps>;
-  contentContainerStyle?: StyleProp<ViewProps>;
-  animationConfig?: object;
-  onZoomBegin?: () => void;
-  isManualZoomEnabled: DerivedValue<boolean>;
-
-  animationFunction?<T extends AnimatableValue>(
-    toValue: T,
-    userConfig?: object,
-    callback?: AnimationCallback
-  ): T;
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden',
-  },
-  zoomButtonWrapper: {
-    position: 'absolute',
-    right: 40,
-    bottom: 40,
-  },
-  zoomButtonContainer: {
-    backgroundColor: '#2E2B2B',
-    overflow: 'hidden',
-    borderRadius: 50,
-    padding: 8,
-    width: 56,
-    height: 56,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  zoomButtonImage: {
-    width: 30,
-    height: 30,
-    tintColor: 'white',
-    position: 'absolute',
-  },
-});
