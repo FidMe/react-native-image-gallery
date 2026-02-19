@@ -1,26 +1,26 @@
-import React, { useCallback } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
-import Animated, { useDerivedValue } from 'react-native-reanimated';
-import { VerticalFeedProps, ImageObject, RenderImageProps } from '../types';
-import { useGalleryState, ZoomContainer, ImagePreview } from '../core';
-import { useVerticalScroll } from './useVerticalScroll';
+import React, {useCallback} from 'react';
+import {StyleSheet, View} from 'react-native';
+import Animated, {useDerivedValue} from 'react-native-reanimated';
+import {VerticalFeedProps, ImageObject, RenderImageProps} from '../types';
+import {useGalleryState, ZoomContainer, ImagePreview} from '../core';
+import {useVerticalScroll} from './useVerticalScroll';
 
 
-const VerticalFeed = (props: VerticalFeedProps) => {
-  const {
-    images,
-    initialIndex,
-    renderCustomImage,
-    renderFooterComponent,
-    renderHeaderComponent,
-    resizeMode = 'contain',
-    onPressImage,
-    onPageChange,
-    onEndReached,
-    onEndReachedThreshold = 0.5,
-    enableZoom = false,
-    contentContainerStyle,
-  } = props;
+const VerticalFeed = ({
+                        images,
+                        initialIndex,
+                        renderCustomImage,
+                        renderFooterComponent,
+                        renderHeaderComponent,
+                        resizeMode = 'contain',
+                        onPressImage,
+                        onPageChange,
+                        onEndReached,
+                        onEndReachedThreshold = 0.5,
+                        enableZoom = false,
+                        contentContainerStyle,
+                      }: VerticalFeedProps) => {
+
 
   const {
     activeIndex,
@@ -69,7 +69,7 @@ const VerticalFeed = (props: VerticalFeedProps) => {
   }, []);
 
   const renderItem = useCallback(
-    ({ item, index }: RenderImageProps) => {
+    ({item, index}: RenderImageProps) => {
       return (
         <ImagePreview
           index={index}

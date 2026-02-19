@@ -1,5 +1,5 @@
 import React from 'react';
-import { ImageResizeMode, StyleProp, ViewStyle } from 'react-native';
+import {ImageResizeMode, StyleProp, ViewStyle} from 'react-native';
 
 // Gallery mode
 export type GalleryMode = 'horizontal' | 'vertical';
@@ -34,6 +34,9 @@ export interface BaseGalleryProps {
   enableZoom?: boolean;
   onPageChange?: (index: number) => void;
   onPressImage?: (item: ImageObject) => void;
+
+  onEndReached?: () => void;
+  onEndReachedThreshold?: number;
 
   renderCustomImage?: (
     item: ImageObject,
@@ -77,9 +80,6 @@ export interface HorizontalGalleryProps extends BaseGalleryProps {
 
 // Props specific to vertical feed mode
 export interface VerticalFeedProps extends BaseGalleryProps {
-  onEndReached?: () => void;
-  onEndReachedThreshold?: number;
-  ListHeaderComponent?: React.ReactNode;
   contentContainerStyle?: StyleProp<ViewStyle>;
 }
 

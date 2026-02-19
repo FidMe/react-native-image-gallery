@@ -1,30 +1,32 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
-import Animated, { useDerivedValue } from 'react-native-reanimated';
-import { HorizontalGalleryProps, ImageObject, RenderImageProps } from '../types';
-import { useGalleryState, ZoomContainer, ImagePreview, Thumbnail } from '../core';
-import { useHorizontalScroll } from './useHorizontalScroll';
+import React, {useEffect, useState, useCallback} from 'react';
+import {FlatList, StyleSheet, View} from 'react-native';
+import Animated, {useDerivedValue} from 'react-native-reanimated';
+import {HorizontalGalleryProps, ImageObject, RenderImageProps} from '../types';
+import {useGalleryState, ZoomContainer, ImagePreview, Thumbnail} from '../core';
+import {useHorizontalScroll} from './useHorizontalScroll';
 
-const HorizontalGallery = (props: HorizontalGalleryProps) => {
-  const {
-    hideThumbs = false,
-    images,
-    initialIndex,
-    renderCustomImage,
-    renderCustomThumb,
-    renderFooterComponent,
-    renderHeaderComponent,
-    resizeMode = 'contain',
-    thumbColor = '#d9b44a',
-    thumbResizeMode = 'cover',
-    thumbSize = 48,
-    thumbOffset = 10,
-    onPressImage,
-    onPageChange,
-    autoScroll = 0,
-    disableAutoScroll = false,
-    enableZoom = false,
-  } = props;
+const HorizontalGallery = ({
+                             hideThumbs = false,
+                             images,
+                             initialIndex,
+                             renderCustomImage,
+                             renderCustomThumb,
+                             renderFooterComponent,
+                             renderHeaderComponent,
+                             resizeMode = 'contain',
+                             thumbColor = '#d9b44a',
+                             thumbResizeMode = 'cover',
+                             thumbSize = 48,
+                             thumbOffset = 10,
+                             onPressImage,
+                             onPageChange,
+                             autoScroll = 0,
+                             disableAutoScroll = false,
+                             enableZoom = false,
+                             onEndReached,
+                             onEndReachedThreshold
+                           }: HorizontalGalleryProps) => {
+
 
   const [autoScrollActive, setAutoScrollActive] = useState(autoScroll > 0);
 
@@ -85,7 +87,7 @@ const HorizontalGallery = (props: HorizontalGalleryProps) => {
   }, []);
 
   const renderItem = useCallback(
-    ({ item, index }: RenderImageProps) => {
+    ({item, index}: RenderImageProps) => {
       return (
         <ImagePreview
           index={index}
@@ -101,7 +103,7 @@ const HorizontalGallery = (props: HorizontalGalleryProps) => {
   );
 
   const renderThumb = useCallback(
-    ({ item, index }: RenderImageProps) => {
+    ({item, index}: RenderImageProps) => {
       return (
         <Thumbnail
           item={item}
@@ -163,7 +165,7 @@ const HorizontalGallery = (props: HorizontalGalleryProps) => {
             onScrollBeginDrag={handleManualScroll}
             onScrollEndDrag={onScrollEnd}
             getItemLayout={getImageLayout}
-            contentContainerStyle={{ alignItems: 'center' }}
+            contentContainerStyle={{alignItems: 'center'}}
           />
         </ZoomContainer>
       </View>
@@ -180,8 +182,9 @@ const HorizontalGallery = (props: HorizontalGalleryProps) => {
             ref={bottomRef}
             renderItem={renderThumb}
             showsHorizontalScrollIndicator={false}
-            ItemSeparatorComponent={() => <View style={{ width: thumbOffset }} />}
-            onEndReachedThreshold={0.2}
+            ItemSeparatorComponent={() => <View style={{width: thumbOffset}}/>}
+            onEndReached={onEndReached}
+            onEndReachedThreshold={onEndReachedThreshold}
             style={styles.bottomFlatlist}
             onScrollBeginDrag={handleManualScroll}
           />
